@@ -1,0 +1,13 @@
+<!-- src/app/shared/components/navbar/navbar.component.html -->
+<nav class="navbar">
+  <a routerLink="/">Home</a>
+
+  <ng-container *ngIf="!isLoggedIn">
+    <a routerLink="/login">Login</a>
+    <a routerLink="/signup">Signup</a>
+ -container *ngIf="isLoggedIn">
+    <a *ngIf="userRole === 'admin'" routerLink="/admin/dashboard">Admin Dashboard</a>
+    <a *ngIf="userRole === 'user'" routerLink="/user/home">User Home</a>
+    <a (click)="logout()">Logout</a>
+  </ng-container>
+</nav>
