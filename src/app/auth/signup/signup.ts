@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { FormsModule } from '@angular/forms';
  
@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-signup',
   templateUrl: './signup.html',
   styleUrl:'./signup.scss',
-  imports:[FormsModule]
+  imports:[FormsModule,RouterLink]
 })
 export class SignupComponent {
   username = '';

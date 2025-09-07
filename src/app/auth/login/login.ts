@@ -1,33 +1,48 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
  
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
-  imports:[FormsModule]
+  imports:[ReactiveFormsModule,CommonModule, RouterLink]
 })
 export class LoginComponent {
-  username = '';
-  password = '';
-  role = 'user';
-  error = '';
+  loginForm: FormGroup;
+  error: string = '';
  
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    //  create form controls
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      role: ['user', Validators.required]  // default user
+    });
+  }
  
   login() {
-    const success = this.authService.login(this.username, this.password, this.role);
+    
+    console.log(this.loginForm.value);
+    if (this.loginForm.invalid) {
+      this.error = 'Please fill all fields';
+      return;
+    }
+ 
+    const { username, password, role } = this.loginForm.value;
+    alert(`Login clicked: ${username}, ${role}`); // debug
+ 
+    const success = this.authService.login(username, password,role);   //, role
     if (success) {
-      if (this.role === 'admin') {
-        this.router.navigate(['/admin']);
-      } else {
-        this.router.navigate(['/home']);
-      }
+      this.router.navigate([role === 'admin' ? '/admin' : '/home']);
     } else {
       this.error = 'Invalid credentials';
     }
   }
 }
- 
