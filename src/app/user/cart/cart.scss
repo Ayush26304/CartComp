@@ -1,0 +1,159 @@
+.cart-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.8s ease;
+}
+ 
+.cart-title {
+  text-align: center;
+  color: #232f3e;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+ 
+.empty-cart {
+  text-align: center;
+  padding: 50px 20px;
+}
+ 
+.empty-cart img {
+  width: 200px;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+.xyz{
+    font-size: 100rem;
+    animation: bounce 2s infinite;
+}
+ 
+.empty-cart p {
+  font-size: 1.2rem;
+  color: #555;
+}
+ 
+.shop-now-btn {
+  background-color: #ff9900;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+ 
+.shop-now-btn:hover {
+  background-color: #e68a00;
+}
+ 
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+ 
+.cart-item {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+ 
+.cart-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+ 
+.product-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: contain;
+  margin-right: 20px;
+}
+ 
+.cart-details h3 {
+  color: #232f3e;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+ 
+.price {
+  color: #b12704;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+ 
+.quantity {
+  color: #333;
+  margin-bottom: 8px;
+}
+ 
+.remove-btn {
+  background: #ffd814;
+  border: none;
+  color: #111;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+ 
+.remove-btn:hover {
+  background: #f7ca00;
+  transform: scale(1.05);
+}
+ 
+.cart-summary {
+  margin-top: 30px;
+  padding: 20px;
+  background: #232f3e;
+  color: white;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.1rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+ 
+.clear-btn {
+  margin-top: 15px;
+  background-color: #ff9900;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+ 
+.clear-btn:hover {
+  background-color: #e68a00;
+}
+ 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+ 
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+ 
