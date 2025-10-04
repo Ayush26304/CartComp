@@ -25,10 +25,6 @@
   margin-bottom: 20px;
   animation: bounce 2s infinite;
 }
-.xyz{
-    font-size: 100rem;
-    animation: bounce 2s infinite;
-}
  
 .empty-cart p {
   font-size: 1.2rem;
@@ -122,8 +118,15 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
  
-.clear-btn {
+.summary-buttons {
   margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 35px;
+  flex-wrap: wrap;
+}
+ 
+.clear-btn {
   background-color: #ff9900;
   border: none;
   padding: 10px 18px;
@@ -135,6 +138,22 @@
  
 .clear-btn:hover {
   background-color: #e68a00;
+}
+ 
+.checkout-btn {
+  background-color: #463df9;
+  border: none;
+  margin-left: 25px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #fffefe;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+ 
+.checkout-btn:hover {
+  background-color: #3527f8;
 }
  
 @keyframes fadeIn {
@@ -156,4 +175,3 @@
     transform: translateY(-10px);
   }
 }
- 
