@@ -1,63 +1,27 @@
-<!-- <nav class="navbar">
-  <div class="logo" (click)="router.navigate(['/home'])">🛒 MyShop</div>
- 
-  <ul class="nav-links">
-    <li><a routerLink="/home">Home</a></li>
-    <li><a routerLink="/products">Products</a></li>
-    <li><a routerLink="/cart">Cart</a></li>
-    <li><a routerLink="/contact">Contact</a></li>
-  </ul>
- 
-  <div class="auth-section">
-    <ng-container *ngIf="isLoggedIn; else guest">
-      <span class="welcome">Hi, {{ username }}</span>
-      <button class="logout-btn" (click)="logout()">Logout</button>
-    </ng-container>
-    <ng-template #guest>
-      <a routerLink="/login" class="login-btn">Login</a>
-      <a routerLink="/signup" class="signup-btn">Signup</a>
-    </ng-template>
-  </div>
-</nav> -->
-
-
-
-
-<!-- 
-<header class="navbar">
-    <h1 class="logo">KartCom</h1>
-    <input type="text" placeholder="Search products..." class="search-bar">
-    <nav>
-      <a href="/" *ngIf="!isLoggedIn">Login</a>
-      <button *ngIf="isLoggedIn"  (click)="logout()">Logout</button>
-      <a href="#">🛒 Cart</a>
-      <div href="/profile" *ngIf="isLoggedIn"  (click)="logout()">View {{ username() }}'s profile</div>
-    </nav>
-</header> -->
 
 
 
 <header class="navbar">
   <div class="navbar-container">
-    <!-- Logo -->
+    
     <div class="logo">KartCom</div>
   <input type="text" placeholder="Search products..." class="search-bar">
-    <!-- Toggle button (only for mobile) -->
+    
     <div class="menu-toggle" (click)="isMenuOpen = !isMenuOpen">
       ☰
     </div>
  
     <!-- Links -->
     <nav [class.active]="isMenuOpen">
-      <a href="/home">Home</a>
-      <a routerLink="/products" >Products</a>
-      <a href="/categories">Categories</a>
-      <a routerLink="/cart" >🛒 Cart</a>
- 
+      <a routerLink="/home">Home</a>
+      <a routerLink="product" >Products</a>
+      <a routerLink="/categories">Categories</a>
+      <a routerLink="/cart" >🛒 Cart{{0}}</a>
+    
       <!-- If logged in -->
       <ng-container *ngIf="isLoggedIn; else guestLinks">
-        <a class="profile">
-          👤 {{ username() }}
+        <a routerLink="/userprofile" class="profile">
+          👤 {{ username }}
         </a>
         <button class="logout-btn" (click)="logout()">Logout</button>
       </ng-container>

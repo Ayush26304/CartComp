@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 export class LoginComponent {
   loginForm: FormGroup;
   error: string = '';
- 
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -23,7 +23,7 @@ export class LoginComponent {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      role: ['user', Validators.required]  // default user
+      role: ['user', Validators.required]  
     });
   }
  
@@ -36,11 +36,12 @@ export class LoginComponent {
     }
  
     const { username, password, role } = this.loginForm.value;
+    
     alert(`Login clicked: ${username}, ${role}`); // debug
  
     const success = this.authService.login(username, password,role);   //, role
     if (success) {
-      this.router.navigate([role === 'admin' ? '/admin' : '/home']);
+     this.router.navigate([role === 'admin' ? '/admin' : '/home']);
     } else {
       this.error = 'Invalid credentials';
     }

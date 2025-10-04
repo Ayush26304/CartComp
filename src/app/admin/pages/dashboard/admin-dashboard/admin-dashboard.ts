@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
  
 @Component({
   selector: 'app-admin',
-  template: `<h1>Welcome Admin Dashboard!</h1>`,
-  styles: [`h1 { text-align: center; margin-top: 50px; color: darkred; }`]
+  templateUrl: 'admin-dashboard.html',
+  styleUrl:'admin-dashboard.scss'
 })
 export class AdminComponent {}
