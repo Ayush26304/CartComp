@@ -7,7 +7,7 @@ import { AdminComponent } from './admin/pages/dashboard/admin-dashboard/admin-da
 import { CategoriesComponent } from './user/pages/categories/categories';
 import { ProductDescriptionComponent } from './user/product/product';
 import { CartComponent } from './user/cart/cart';
-import { Userprofile } from './user/userprofile/userprofile';
+import { UserProfile } from './user/userprofile/userprofile';
 import { CheckoutComponent } from './user/checkout/checkout';
 
 
@@ -22,7 +22,7 @@ export const routes: Routes = [
   {path:'categories',component:CategoriesComponent},
   {path:'product/:id',component:ProductDescriptionComponent},
   {path:'cart',component:CartComponent},
-  {path:'userprofile',component:Userprofile},
+  {path:'userprofile',component:UserProfile},
   {path:'checkout',component:CheckoutComponent}
 
 ];

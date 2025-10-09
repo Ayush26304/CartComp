@@ -1,1 +1,93 @@
-<p>userprofile works!</p>
+
+<div class="profile-container">
+  <!-- LEFT SIDEBAR -->
+  <div class="profile-sidebar">
+    <div class="user-card">
+      <img [src]="user.image" alt="User Avatar" class="avatar" />
+      <h3>{{ user.name }}</h3>
+      <p>{{ user.email }}</p>
+      <button class="edit-btn" (click)="editProfile()">Edit Profile</button>
+    </div>
+ 
+    <ul class="nav-list">
+      <li
+        *ngFor="let tab of tabs"
+        (click)="selectTab(tab)"
+        [class.active]="tab === activeTab"
+      >
+        {{ tab }}
+      </li>
+    </ul>
+  </div>
+ 
+  <!-- RIGHT CONTENT -->
+  <div class="profile-content">
+    <!-- Orders Section -->
+    <div *ngIf="activeTab === 'Orders'" class="orders-section">
+      <h2>Your Orders</h2>
+ 
+      <div *ngIf="orders.length > 0; else noOrders">
+        <div class="order-card" *ngFor="let o of orders">
+          <div class="order-header">
+            <span class="order-id">Order #{{ o.id }}</span>
+            <span
+              class="order-status"
+              [ngClass]="o.status.toLowerCase()"
+              >{{ o.status }}</span
+            >
+          </div>
+ 
+          <div class="order-body">
+            <div class="order-item" *ngFor="let item of o.items">
+              <img [src]="item.image" alt="{{ item.title }}" />
+              <div class="item-details">
+                <h4>{{ item.title }}</h4>
+                <p>{{ item.price | currency: 'INR' }}</p>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="order-footer">
+            <p>Ordered on {{ o.date | date: 'mediumDate' }}</p>
+          </div>
+        </div>
+      </div>
+ 
+      <ng-template #noOrders>
+        <p class="empty">No orders yet. Start shopping!</p>
+      </ng-template>
+    </div>
+ 
+    <!-- Favorites Section -->
+    <div *ngIf="activeTab === 'Favorites'" class="favorites-section">
+      <h2>Your Favorites</h2>
+      <div *ngIf="favorites.length; else noFavs" class="fav-grid">
+        <div class="fav-card" *ngFor="let f of favorites">
+          <img [src]="f.image" alt="{{ f.title }}" />
+          <h4>{{ f.title }}</h4>
+          <p>{{ f.price | currency: 'INR' }}</p>
+        </div>
+      </div>
+ 
+      <ng-template #noFavs>
+        <p class="empty">No favorites added yet ❤️</p>
+      </ng-template>
+    </div>
+ 
+    <!-- Address Section -->
+    <div *ngIf="activeTab === 'Addresses'" class="address-section">
+      <h2>Saved Addresses</h2>
+      <div *ngIf="addresses.length; else noAddr">
+        <div class="address-card" *ngFor="let a of addresses">
+          <h4>{{ a.name }}</h4>
+          <p>{{ a.line1 }}, {{ a.city }}, {{ a.state }} - {{ a.zip }}</p>
+          <p>{{ a.phone }}</p>
+        </div>
+      </div>
+ 
+      <ng-template #noAddr>
+        <p class="empty">No addresses saved yet.</p>
+      </ng-template>
+    </div>
+  </div>
+</div>

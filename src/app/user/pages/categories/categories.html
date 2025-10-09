@@ -1,20 +1,49 @@
 <div class="categories-container">
   <h2>Shop by Categories</h2>
+ 
+  <!-- Category List -->
   <ul class="categories-list">
-    <li *ngFor="let cat of categories" (click)="loadProducts(cat)">
+    <li
+      *ngFor="let cat of categories"
+      (click)="loadProducts(cat)"
+      [class.active]="cat === selectedCategory"
+    >
       {{ cat | titlecase }}
     </li>
   </ul>
  
-  <div *ngIf="selectedCategory">
+  <!-- Product Section -->
+  <div *ngIf="selectedCategory" class="products-section">
     <h3>Products in {{ selectedCategory | titlecase }}</h3>
+ 
     <div class="products-grid">
-      <div class="product-card" *ngFor="let p of products" (click)="openProduct(p.id)">
-        <img [src]="p.image" alt="{{p.title}}">
-        <h4>{{ p.title }}</h4>
-        <p>{{ p.price | currency:'INR' }}</p>
-        <button (click)="addToCart(p)" class="btn">Add to Cart</button>
+      <div
+        class="product-card"
+        *ngFor="let p of products"
+        (click)="openProduct(p.id)"
+      >
+        <div class="image-wrapper">
+          <img [src]="p.image" alt="{{ p.title }}" />
+        </div>
+        <div class="product-info">
+          <h4 class="title">{{ p.title }}</h4>
+          <p class="price">{{ p.price | currency: 'INR' }}</p>
+          <button
+            (click)="addToCart(p); $event.stopPropagation()"
+            class="btn"
+          >
+            Add to Cart
+          </button>
+          <span
+            class="heart"
+            [class.active]="p.isFavorite"
+            (click)="toggleFavorite(p)"
+          >
+            ♥
+          </span>
+        </div>
       </div>
     </div>
   </div>
 </div>
+

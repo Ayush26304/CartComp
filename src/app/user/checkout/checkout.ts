@@ -34,6 +34,6 @@ export class CheckoutComponent implements OnInit {
  
   closePopup() {
     this.showSuccess = false;
-    this.router.navigate(['/categories']);
+    this.router.navigate(['/home']);
   }
 }

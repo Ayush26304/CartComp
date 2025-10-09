@@ -1,0 +1,244 @@
+.profile-container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  font-family: 'Poppins', sans-serif;
+  background: #f7f8fa;
+  min-height: 100vh;
+ 
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+ 
+  .profile-sidebar {
+    width: 25%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ 
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+ 
+    .user-card {
+      text-align: center;
+      margin-bottom: 2rem;
+ 
+      .avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 0.8rem;
+      }
+ 
+      h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+      }
+ 
+      p {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 1rem;
+      }
+ 
+      .edit-btn {
+        background: #ffa41c;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+ 
+        &:hover {
+          background: #f90;
+        }
+      }
+    }
+ 
+    .nav-list {
+      list-style: none;
+      width: 100%;
+      padding: 0;
+ 
+      li {
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        font-weight: 500;
+ 
+        &:hover {
+          background: #ffd814;
+        }
+ 
+        &.active {
+          background: #ffa41c;
+          color: #fff;
+        }
+      }
+    }
+  }
+ 
+  .profile-content {
+    flex: 1;
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+ 
+    h2 {
+      margin-bottom: 1.5rem;
+      color: #222;
+    }
+ 
+    .empty {
+      text-align: center;
+      color: #777;
+      margin-top: 2rem;
+    }
+ 
+    /* ORDERS SECTION */
+    .order-card {
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.2rem;
+      transition: all 0.3s;
+ 
+      &:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+ 
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.8rem;
+ 
+        .order-id {
+          font-weight: 600;
+        }
+ 
+        .order-status {
+          font-weight: 500;
+          text-transform: capitalize;
+          border-radius: 15px;
+          padding: 0.2rem 0.8rem;
+          font-size: 0.85rem;
+ 
+          &.packed {
+            background: #ffe082;
+            color: #444;
+          }
+          &.shipped {
+            background: #81d4fa;
+            color: #004d40;
+          }
+          &.out {
+            background: #ffb74d;
+            color: #4e342e;
+          }
+          &.delivered {
+            background: #81c784;
+            color: #1b5e20;
+          }
+        }
+      }
+ 
+      .order-body {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+ 
+        .order-item {
+          display: flex;
+          gap: 1rem;
+          background: #fafafa;
+          padding: 0.6rem;
+          border-radius: 8px;
+          flex: 1 1 200px;
+ 
+          img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+          }
+ 
+          .item-details {
+            h4 {
+              font-size: 0.95rem;
+              margin-bottom: 0.2rem;
+            }
+            p {
+              font-size: 0.85rem;
+              color: #b12704;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+ 
+      .order-footer {
+        text-align: right;
+        font-size: 0.85rem;
+        color: #555;
+        margin-top: 0.8rem;
+      }
+    }
+ 
+    /* FAVORITES */
+    .fav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+ 
+      .fav-card {
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.3s;
+ 
+        &:hover {
+          background: #fff;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+ 
+        img {
+          width: 100%;
+          height: 150px;
+          object-fit: contain;
+          margin-bottom: 0.5rem;
+        }
+ 
+        h4 {
+          font-size: 1rem;
+          margin-bottom: 0.3rem;
+        }
+ 
+        p {
+          color: #b12704;
+          font-weight: 500;
+        }
+      }
+    }
+ 
+    /* ADDRESSES */
+    .address-card {
+      background: #fafafa;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #eee;
+    }
+  }
+}
+ 

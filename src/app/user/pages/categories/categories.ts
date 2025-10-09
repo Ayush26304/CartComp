@@ -26,6 +26,8 @@ export class CategoriesComponent implements OnInit {
   loadCategories(): void {
     this.categoriesService.getCategories().subscribe(data => {
       this.categories = data;
+      this.loadProducts(data[0]);
+      this.selectedCategory = data[0]
     });
   }
  
@@ -43,5 +45,9 @@ export class CategoriesComponent implements OnInit {
 
  addToCart(products:any){
   alert(`${products.title} is added to cart `);
+ }
+
+ toggleFavorite(product:any):void{
+  product.isFavorite =!product.isFavorite;
  }
 }
