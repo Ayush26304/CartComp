@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AdminService } from '../../../admin.service';
+import { AdminService, OrderResponseDto } from '../../../admin.service';
 import { UserService, UserProfileDto } from '../../../services/user.service';
 import { AuthService } from '../../../../auth/auth.service';
 import { CategoryModalComponent } from '../../../components/category-modal/category-modal';
@@ -30,7 +30,7 @@ export class AdminComponent implements OnInit {
   users: any[] = [];
   categories: any[] = [];
   products: any[] = [];
-  orders: any[] = [];
+  orders: OrderResponseDto[] = [];
 
   // Loading states
   loading = {
@@ -71,29 +71,21 @@ export class AdminComponent implements OnInit {
   }
 
   setActiveSection(section: string): void {
-    console.log('Setting active section to:', section);
-    alert(`Clicked on ${section} section`); // Temporary debug alert
     this.activeSection = section;
     
     switch (section) {
       case 'users':
-        console.log('Loading users...');
         this.loadUsers();
         break;
       case 'categories':
-        console.log('Loading categories...');
         this.loadCategories();
         break;
       case 'products':
-        console.log('Loading products...');
         this.loadProducts();
         break;
       case 'orders':
-        console.log('Loading orders...');
         this.loadOrders();
         break;
-      default:
-        console.log('No specific loader for section:', section);
     }
   }
 
@@ -102,7 +94,6 @@ export class AdminComponent implements OnInit {
     this.userService.getAllUsers().subscribe({
       next: (users: any) => {
         this.stats.totalUsers = users.length;
-        console.log('Users loaded:', users.length);
       },
       error: (error: any) => {
         console.error('Error loading users stats:', error);
@@ -113,7 +104,6 @@ export class AdminComponent implements OnInit {
     this.adminService.getAllCategories().subscribe({
       next: (categories: any) => {
         this.stats.totalCategories = categories.length;
-        console.log('Categories loaded:', categories.length);
       },
       error: (error: any) => {
         console.error('Error loading categories stats:', error);
@@ -124,7 +114,6 @@ export class AdminComponent implements OnInit {
     this.adminService.getAllProducts().subscribe({
       next: (products: any) => {
         this.stats.totalProducts = products.length;
-        console.log('Products loaded:', products.length);
       },
       error: (error: any) => {
         console.error('Error loading products stats:', error);
@@ -132,17 +121,22 @@ export class AdminComponent implements OnInit {
       }
     });
 
-    // For now, set orders to 0 since we need to add the endpoint to backend
-    this.stats.totalOrders = 0;
-    console.log('Order stats set to 0 - endpoint needs to be added to backend');
+    // Load orders stats
+    this.adminService.getAllOrders().subscribe({
+      next: (orders: any) => {
+        this.stats.totalOrders = orders.length;
+      },
+      error: (error: any) => {
+        console.error('Error loading order stats:', error);
+        this.stats.totalOrders = 0;
+      }
+    });
   }
 
   private loadUsers(): void {
-    console.log('LoadUsers method called');
     this.loading.users = true;
     this.userService.getAllUsers().subscribe({
       next: (users: any) => {
-        console.log('Users data received:', users);
         this.users = users;
         this.loading.users = false;
       },
@@ -155,11 +149,9 @@ export class AdminComponent implements OnInit {
   }
 
   private loadCategories(): void {
-    console.log('LoadCategories method called');
     this.loading.categories = true;
     this.adminService.getAllCategories().subscribe({
       next: (categories: any) => {
-        console.log('Categories data received:', categories);
         this.categories = categories;
         this.loading.categories = false;
       },
@@ -172,11 +164,9 @@ export class AdminComponent implements OnInit {
   }
 
   private loadProducts(): void {
-    console.log('LoadProducts method called');
     this.loading.products = true;
     this.adminService.getAllProducts().subscribe({
       next: (products: any) => {
-        console.log('Products data received:', products);
         this.products = products;
         this.loading.products = false;
       },
@@ -191,32 +181,22 @@ export class AdminComponent implements OnInit {
   private loadOrders(): void {
     this.loading.orders = true;
     
-    // Note: Backend needs to add @GetMapping("/all") @PreAuthorize("hasRole('ADMIN')") to OrderController
-    // For now, we'll show a message that this feature needs backend implementation
-    console.log('Loading orders - this requires adding /api/order/all endpoint to OrderController');
-    
-    // Simulate empty orders for now
-    setTimeout(() => {
-      this.orders = [];
-      this.loading.orders = false;
-      console.log('Orders loaded (empty - backend endpoint needed)');
-    }, 1000);
-    
-    // Uncomment this when backend adds the endpoint:
-    /*
     this.adminService.getAllOrders().subscribe({
       next: (orders: any) => {
         this.orders = orders;
         this.loading.orders = false;
-        console.log('Orders loaded:', orders.length);
+        this.stats.totalOrders = orders.length;
       },
       error: (error: any) => {
         console.error('Error loading orders:', error);
         this.loading.orders = false;
         this.orders = [];
+        // If the endpoint doesn't exist, show a helpful message
+        if (error.status === 404) {
+          console.log('Order admin endpoint not found - backend needs admin order endpoints');
+        }
       }
     });
-    */
   }
 
   // User Management
@@ -386,7 +366,7 @@ export class AdminComponent implements OnInit {
     this.adminService.updateOrderStatus(orderId, newStatus).subscribe({
       next: () => {
         // Update the order status in the local array
-        const orderIndex = this.orders.findIndex(order => order.id === orderId);
+        const orderIndex = this.orders.findIndex(order => order.orderId === orderId);
         if (orderIndex !== -1) {
           this.orders[orderIndex].status = newStatus;
         }
@@ -396,16 +376,29 @@ export class AdminComponent implements OnInit {
         console.error('Error updating order status:', error);
         alert('Failed to update order status');
         // Revert the select value
-        event.target.value = this.orders.find(o => o.id === orderId)?.status || 'PENDING';
+        event.target.value = this.orders.find(o => o.orderId === orderId)?.status || 'PENDING';
       }
     });
   }
 
   viewOrderDetails(orderId: number): void {
     this.adminService.getOrderById(orderId).subscribe({
-      next: (order: any) => {
+      next: (order: OrderResponseDto) => {
         // Create a detailed view modal or navigate to order details
-        alert(`Order Details:\n\nOrder ID: ${order.id}\nCustomer: ${order.customerName}\nTotal: ${this.formatCurrency(order.totalAmount)}\nStatus: ${order.status}\nItems: ${JSON.stringify(order.items, null, 2)}`);
+        const itemsText = order.items.map(item => 
+          `${item.productName} x${item.quantity} @ ₹${item.price}`
+        ).join('\n');
+        
+        alert(`Order Details:\n\n` +
+              `Order ID: ${order.orderId}\n` +
+              `Invoice: ${order.invoiceNumber}\n` +
+              `Customer: ${order.shipping.fullName}\n` +
+              `Phone: ${order.shipping.phone}\n` +
+              `Address: ${order.shipping.address}, ${order.shipping.city}\n` +
+              `Total: ${this.formatCurrency(order.totalAmount)}\n` +
+              `Status: ${order.status}\n` +
+              `Date: ${order.orderDate}\n\n` +
+              `Items:\n${itemsText}`);
       },
       error: (error: any) => {
         console.error('Error fetching order details:', error);
@@ -414,38 +407,25 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  // Delete order method
+  deleteOrder(orderId: number): void {
+    if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+      this.adminService.deleteOrder(orderId).subscribe({
+        next: () => {
+          this.orders = this.orders.filter(order => order.orderId !== orderId);
+          this.stats.totalOrders--;
+          alert('Order deleted successfully');
+        },
+        error: (error: any) => {
+          console.error('Error deleting order:', error);
+          alert('Failed to delete order. Only cancelled orders can be deleted.');
+        }
+      });
+    }
+  }
+
   downloadInvoice(orderId: number): void {
-    // Create a link to download invoice
-    const link = document.createElement('a');
-    link.href = `http://localhost:8056/api/order/invoice/${orderId}`;
-    link.setAttribute('download', `invoice_${orderId}.txt`);
-    link.setAttribute('target', '_blank');
-    
-    // Add authorization header by creating a fetch request instead
-    const token = this.authService.token;
-    fetch(`http://localhost:8056/api/order/invoice/${orderId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.blob())
-    .then(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `invoice_${orderId}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    })
-    .catch(error => {
-      console.error('Error downloading invoice:', error);
-      alert('Failed to download invoice');
-    });
+    this.adminService.downloadOrderInvoice(orderId);
   }
 
   logout(): void {

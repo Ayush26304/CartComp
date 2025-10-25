@@ -150,8 +150,9 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  trackOrder(orderId: number): void {
-    this.router.navigate(['/order-tracking', orderId]);
+  trackOrder(order: OrderResponseDto): void {
+    // Use invoice number for tracking instead of order ID
+    this.router.navigate(['/order-tracking', order.invoiceNumber]);
   }
 
   downloadInvoice(orderId: number): void {

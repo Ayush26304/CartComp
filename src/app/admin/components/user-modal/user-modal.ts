@@ -452,7 +452,7 @@ export class UserModalComponent implements OnInit {
       });
     } else {
       // Create new user
-      const newUser: MinimalProfileDto = {
+      const newUser: any = {
         username: this.userForm.username,
         email: this.userForm.email,
         firstName: this.userForm.firstName,

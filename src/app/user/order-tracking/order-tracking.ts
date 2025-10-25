@@ -13,6 +13,7 @@ import { OrderService, OrderResponseDto } from '../order.service';
 })
 export class OrderTrackingComponent implements OnInit {
   orderId: number | null = null;
+  invoiceNumber: string | null = null;
   orderDetails: OrderResponseDto | null = null;
   trackingInfo: any = null;
   loading = false;
@@ -27,13 +28,19 @@ export class OrderTrackingComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.orderId = +id;
-      this.loadOrderDetails();
+      // Check if it's a number (order ID) or string (invoice number)
+      if (/^\d+$/.test(id)) {
+        this.orderId = +id;
+        this.loadOrderDetailsById();
+      } else {
+        this.invoiceNumber = id;
+        this.loadOrderDetailsByInvoice();
+      }
       this.loadTrackingInfo();
     }
   }
 
-  loadOrderDetails(): void {
+  loadOrderDetailsById(): void {
     if (!this.orderId) return;
     
     this.loading = true;
@@ -43,8 +50,26 @@ export class OrderTrackingComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading order:', error);
+        console.error('Error loading order by ID:', error);
         this.error = 'Failed to load order details';
+        this.loading = false;
+      }
+    });
+  }
+
+  loadOrderDetailsByInvoice(): void {
+    if (!this.invoiceNumber) return;
+    
+    this.loading = true;
+    this.orderService.trackOrderByInvoice(this.invoiceNumber).subscribe({
+      next: (order) => {
+        this.orderDetails = order;
+        this.orderId = order.orderId; // Set orderId for other operations
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading order by invoice:', error);
+        this.error = 'Failed to load order details. Please check your invoice number.';
         this.loading = false;
       }
     });

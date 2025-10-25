@@ -95,12 +95,6 @@
       <div *ngIf="loading.users" class="loading">Loading users...</div>
       
       <div *ngIf="!loading.users" class="data-table">
-        <div class="debug-info" style="background: #f0f0f0; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
-          <p><strong>Debug Info:</strong></p>
-          <p>Users array length: {{users?.length || 0}}</p>
-          <p>Users array: {{users | json}}</p>
-        </div>
-        
         <table *ngIf="users && users.length > 0">
           <thead>
             <tr>
@@ -145,12 +139,6 @@
       <div *ngIf="loading.categories" class="loading">Loading categories...</div>
       
       <div *ngIf="!loading.categories" class="data-table">
-        <div class="debug-info" style="background: #f0f0f0; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
-          <p><strong>Categories Debug Info:</strong></p>
-          <p>Categories array length: {{categories?.length || 0}}</p>
-          <p>Categories array: {{categories | json}}</p>
-        </div>
-        
         <table *ngIf="categories && categories.length > 0">
           <thead>
             <tr>
@@ -226,12 +214,12 @@
       <div *ngIf="loading.orders" class="loading">Loading orders...</div>
       
       <div *ngIf="!loading.orders" class="data-table">
-        <table>
+        <table *ngIf="orders && orders.length > 0">
           <thead>
             <tr>
               <th>Order ID</th>
-              <th>Customer ID</th>
               <th>Customer Name</th>
+              <th>Invoice Number</th>
               <th>Items</th>
               <th>Total</th>
               <th>Status</th>
@@ -241,15 +229,15 @@
           </thead>
           <tbody>
             <tr *ngFor="let order of orders">
-              <td>#{{order.id}}</td>
-              <td>{{order.userId || 'N/A'}}</td>
-              <td>{{order.customerName || 'N/A'}}</td>
-              <td>{{order.itemCount || 'N/A'}} items</td>
+              <td>#{{order.orderId}}</td>
+              <td>{{order.shipping?.fullName || 'N/A'}}</td>
+              <td>{{order.invoiceNumber}}</td>
+              <td>{{order.items?.length || 0}} items</td>
               <td>{{formatCurrency(order.totalAmount)}}</td>
               <td>
                 <select 
                   [value]="order.status" 
-                  (change)="updateOrderStatus(order.id, $event)"
+                  (change)="updateOrderStatus(order.orderId, $event)"
                   class="status-select"
                   [class]="'status-' + order.status?.toLowerCase()"
                 >
@@ -257,18 +245,26 @@
                   <option value="CONFIRMED">CONFIRMED</option>
                   <option value="PROCESSING">PROCESSING</option>
                   <option value="SHIPPED">SHIPPED</option>
+                  <option value="OUT_FOR_DELIVERY">OUT FOR DELIVERY</option>
                   <option value="DELIVERED">DELIVERED</option>
                   <option value="CANCELLED">CANCELLED</option>
+                  <option value="RETURNED">RETURNED</option>
                 </select>
               </td>
               <td>{{order.orderDate ? formatDate(order.orderDate) : 'N/A'}}</td>
               <td>
-                <button class="btn-view" (click)="viewOrderDetails(order.id)">View Details</button>
-                <button class="btn-invoice" (click)="downloadInvoice(order.id)">Invoice</button>
+                <button class="btn-view" (click)="viewOrderDetails(order.orderId)">View Details</button>
+                <button class="btn-invoice" (click)="downloadInvoice(order.orderId)">Invoice</button>
+                <button class="btn-delete" (click)="deleteOrder(order.orderId)">Delete</button>
               </td>
             </tr>
           </tbody>
         </table>
+        
+        <div *ngIf="!orders || orders.length === 0" class="no-data">
+          <p>No orders found or data not loaded yet.</p>
+          <p><small>Make sure the backend has admin order endpoints implemented.</small></p>
+        </div>
       </div>
     </div>
 

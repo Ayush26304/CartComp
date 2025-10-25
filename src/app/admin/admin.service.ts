@@ -48,6 +48,33 @@ export interface OrderSummaryDto {
   itemCount: number;
 }
 
+export interface OrderResponseDto {
+  orderId: number;
+  invoiceNumber: string;
+  totalAmount: number;
+  status: string;
+  orderDate: string;
+  items: OrderItemDto[];
+  shipping: ShippingInfoDto;
+}
+
+export interface OrderItemDto {
+  productId: number;
+  productName: string;
+  price: number;
+  quantity: number;
+}
+
+export interface ShippingInfoDto {
+  fullName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -135,23 +162,76 @@ export class AdminService {
     });
   }
 
-  // Order Management - Note: You may need to add `/all` endpoint to OrderController for admin access
-  getAllOrders(): Observable<OrderSummaryDto[]> {
-    // For now, this will return empty array until backend adds admin order endpoint
-    // You can add this endpoint to OrderController: @GetMapping("/all") @PreAuthorize("hasRole('ADMIN')")
-    return this.http.get<OrderSummaryDto[]>(`${this.baseUrl}/order/all`, {
+  // Order Management - Matching your OrderController endpoints exactly
+  getAllOrders(): Observable<OrderResponseDto[]> {
+    return this.http.get<OrderResponseDto[]>(`${this.baseUrl}/order/all`, {
       headers: this.getHeaders()
     });
   }
 
-  getOrderById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/order/${id}`, {
+  getOrderById(id: number): Observable<OrderResponseDto> {
+    return this.http.get<OrderResponseDto>(`${this.baseUrl}/order/user/${id}`, {
       headers: this.getHeaders()
     });
   }
 
-  updateOrderStatus(id: number, status: string): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/order/${id}/status`, { status }, {
+  updateOrderStatus(id: number, status: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/order/updatestatus/${id}?status=${status}`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  deleteOrder(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/order/delete/${id}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  trackOrderByInvoice(invoiceNumber: string): Observable<OrderResponseDto> {
+    return this.http.get<OrderResponseDto>(`${this.baseUrl}/order/track/${invoiceNumber}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  // Additional order management methods matching your controller
+  getUserOrderHistory(): Observable<OrderResponseDto[]> {
+    return this.http.get<OrderResponseDto[]>(`${this.baseUrl}/order/history`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  downloadOrderInvoice(orderId: number): void {
+    const url = `${this.baseUrl}/order/invoice/${orderId}`;
+    const headers = this.getHeaders();
+    
+    // Create a link to download with authorization
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': headers.Authorization,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.blob())
+    .then(blob => {
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `invoice_${orderId}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    })
+    .catch(error => {
+      console.error('Error downloading invoice:', error);
+      alert('Failed to download invoice');
+    });
+  }
+
+  // Statistics for admin dashboard
+  getDashboardStats(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/stats`, {
       headers: this.getHeaders()
     });
   }

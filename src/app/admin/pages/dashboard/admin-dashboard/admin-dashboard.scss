@@ -210,6 +210,28 @@
   }
 }
 
+
+
+.no-data {
+  text-align: center;
+  padding: 3rem;
+  color: #7f8c8d;
+
+  p {
+    margin: 0.5rem 0;
+    
+    &:first-child {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    small {
+      color: #95a5a6;
+      font-style: italic;
+    }
+  }
+}
+
 .btn-edit, .btn-delete, .btn-view {
   padding: 0.25rem 0.75rem;
   border: none;
@@ -433,3 +455,13 @@
     background: #545b62;
   }
 }
+
+// Status-specific styles for order management
+.status-pending { background-color: #fff3cd; color: #856404; }
+.status-confirmed { background-color: #d1ecf1; color: #0c5460; }
+.status-processing { background-color: #cce5ff; color: #004085; }
+.status-shipped { background-color: #d4edda; color: #155724; }
+.status-out_for_delivery { background-color: #e2e3e5; color: #383d41; }
+.status-delivered { background-color: #d4edda; color: #155724; }
+.status-cancelled { background-color: #f8d7da; color: #721c24; }
+.status-returned { background-color: #f0ad4e; color: #8a6d3b; }

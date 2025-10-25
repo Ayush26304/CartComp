@@ -85,7 +85,7 @@ export class CheckoutComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error clearing cart:', error);
-          }
+          }   
         });
       },
       error: (error) => {
@@ -109,7 +109,8 @@ export class CheckoutComponent implements OnInit {
   // Navigate to order tracking
   viewOrderTracking() {
     if (this.placedOrder) {
-      this.router.navigate(['/order-tracking', this.placedOrder.orderId]);
+      // Use invoice number for tracking instead of order ID
+      this.router.navigate(['/order-tracking', this.placedOrder.invoiceNumber]);
     }
   }
 }

@@ -175,7 +175,7 @@
               <span class="order-id-label">Order #{{ order.orderId }}</span>
               <span class="invoice-number">{{ order.invoiceNumber }}</span>
               <div class="order-actions">
-                <button class="order-action-btn" (click)="trackOrder(order.orderId)">
+                <button class="order-action-btn" (click)="trackOrder(order)">
                   📦 Track Order
                 </button>
                 <button class="order-action-btn" (click)="downloadInvoice(order.orderId)">

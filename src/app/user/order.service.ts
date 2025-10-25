@@ -87,6 +87,14 @@ export class OrderService {
     );
   }
 
+  // Track order by invoice number
+  trackOrderByInvoice(invoiceNumber: string): Observable<OrderResponseDto> {
+    return this.http.get<OrderResponseDto>(
+      `${this.apiUrl}/track/${invoiceNumber}`, 
+      { headers: this.getHeaders() }
+    );
+  }
+
   // Get order status with tracking info (mock implementation for UI)
   getOrderTracking(orderId: number): Observable<any> {
     // This would typically come from backend, but creating mock data for UI
