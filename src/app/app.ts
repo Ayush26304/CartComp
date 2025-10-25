@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-root',
   imports: [RouterOutlet,FormsModule],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  standalone: true
 })
 export class App {
   protected readonly title = signal('kartcom');

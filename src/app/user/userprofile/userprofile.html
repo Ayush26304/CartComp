@@ -1,92 +1,306 @@
+<app-navbar *ngIf="showNavbar"></app-navbar>
 
 <div class="profile-container">
   <!-- LEFT SIDEBAR -->
   <div class="profile-sidebar">
     <div class="user-card">
-      <img [src]="user.image" alt="User Avatar" class="avatar" />
-      <h3>{{ user.name }}</h3>
-      <p>{{ user.email }}</p>
-      <button class="edit-btn" (click)="editProfile()">Edit Profile</button>
+      <div class="user-info-header">
+        <img [src]="user.image" alt="User Avatar" class="avatar" />
+        <div class="user-details">
+          <h3>{{ user.name }}</h3>
+          <p class="user-email">{{ user.email }}</p>
+          <span class="user-badge">Prime Member</span>
+        </div>
+      </div>
+
+      <div class="profile-form-section">
+        <div class="section-header">
+          <h4>Account Information</h4>
+          <button 
+            class="toggle-edit-btn" 
+            type="button" 
+            (click)="toggleEditMode()"
+          >
+            {{ isEditMode ? 'Cancel' : 'Edit' }}
+          </button>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="editProfile()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input 
+                formControlName="fullName" 
+                placeholder="Enter your full name"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input 
+                formControlName="phone" 
+                placeholder="Enter phone number"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>Address Line 1</label>
+              <input 
+                formControlName="addressLine1" 
+                placeholder="Street address"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>Address Line 2</label>
+              <input 
+                formControlName="addressLine2" 
+                placeholder="Apartment, suite, etc."
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>City</label>
+              <input 
+                formControlName="city" 
+                placeholder="Enter city"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>State</label>
+              <input 
+                formControlName="state" 
+                placeholder="Enter state"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>Postal Code</label>
+              <input 
+                formControlName="postalCode" 
+                placeholder="Enter postal code"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>Country</label>
+              <input 
+                formControlName="country" 
+                placeholder="Enter country"
+                [readonly]="!isEditMode"
+                [class.readonly]="!isEditMode"
+              />
+            </div>
+          </div>
+          
+          <button 
+            *ngIf="isEditMode" 
+            class="save-btn" 
+            type="submit"
+          >
+            Save Changes
+          </button>
+        </form>
+      </div>
     </div>
- 
-    <ul class="nav-list">
-      <li
-        *ngFor="let tab of tabs"
-        (click)="selectTab(tab)"
-        [class.active]="tab === activeTab"
-      >
-        {{ tab }}
-      </li>
-    </ul>
+
+    <nav class="sidebar-nav">
+      <h4>Your Account</h4>
+      <ul class="nav-list">
+        <li
+          *ngFor="let tab of tabs"
+          (click)="selectTab(tab)"
+          [class.active]="tab === activeTab"
+          class="nav-item"
+        >
+          <i class="nav-icon" [ngClass]="getTabIcon(tab)"></i>
+          <span>{{ tab }}</span>
+        </li>
+      </ul>
+    </nav>
   </div>
- 
+
   <!-- RIGHT CONTENT -->
   <div class="profile-content">
     <!-- Orders Section -->
     <div *ngIf="activeTab === 'Orders'" class="orders-section">
-      <h2>Your Orders</h2>
- 
-      <div *ngIf="orders.length > 0; else noOrders">
-        <div class="order-card" *ngFor="let o of orders">
-          <div class="order-header">
-            <span class="order-id">Order #{{ o.id }}</span>
-            <span
-              class="order-status"
-              [ngClass]="o.status.toLowerCase()"
-              >{{ o.status }}</span
-            >
-          </div>
- 
-          <div class="order-body">
-            <div class="order-item" *ngFor="let item of o.items">
-              <img [src]="item.image" alt="{{ item.title }}" />
-              <div class="item-details">
-                <h4>{{ item.title }}</h4>
-                <p>{{ item.price | currency: 'INR' }}</p>
+      <div class="section-header-main">
+        <h2>Your Orders</h2>
+        <button class="refresh-btn" (click)="loadUserOrders()" [disabled]="loadingOrders">
+          <span *ngIf="!loadingOrders">🔄 Refresh</span>
+          <span *ngIf="loadingOrders">Loading...</span>
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loadingOrders" class="loading-orders">
+        <div class="spinner"></div>
+        <p>Loading your orders...</p>
+      </div>
+
+      <!-- Orders List -->
+      <div *ngIf="!loadingOrders && orders.length > 0; else noOrders">
+        <div class="order-card-main" *ngFor="let order of orders">
+          <div class="order-header-main">
+            <div class="order-meta">
+              <div class="order-info">
+                <span class="order-label">ORDER PLACED</span>
+                <span class="order-date">{{ formatOrderDate(order.orderDate) }}</span>
+              </div>
+              <div class="order-info">
+                <span class="order-label">TOTAL</span>
+                <span class="order-total">₹{{ order.totalAmount }}</span>
+              </div>
+              <div class="order-info">
+                <span class="order-label">SHIP TO</span>
+                <span class="ship-to">{{ order.shipping.fullName }}</span>
+              </div>
+            </div>
+            <div class="order-id-section">
+              <span class="order-id-label">Order #{{ order.orderId }}</span>
+              <span class="invoice-number">{{ order.invoiceNumber }}</span>
+              <div class="order-actions">
+                <button class="order-action-btn" (click)="trackOrder(order.orderId)">
+                  📦 Track Order
+                </button>
+                <button class="order-action-btn" (click)="downloadInvoice(order.orderId)">
+                  📄 Invoice
+                </button>
               </div>
             </div>
           </div>
- 
-          <div class="order-footer">
-            <p>Ordered on {{ o.date | date: 'mediumDate' }}</p>
+
+          <div class="order-status-bar">
+            <span class="order-status-main" [class]="getStatusClass(order.status)">
+              {{ order.status.replace('_', ' ') }}
+            </span>
+          </div>
+
+          <div class="order-items">
+            <div class="order-item-main" *ngFor="let item of order.items">
+              <div class="item-details-main">
+                <h4 class="item-title">{{ item.productName }}</h4>
+                <p class="item-price">₹{{ item.price }} × {{ item.quantity }}</p>
+                <p class="item-subtotal">Subtotal: ₹{{ item.price * item.quantity }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
- 
+
       <ng-template #noOrders>
-        <p class="empty">No orders yet. Start shopping!</p>
+        <div class="empty-state">
+          <div class="empty-icon">📦</div>
+          <h3>No orders yet</h3>
+          <p>When you place your first order, it will appear here</p>
+          <button class="start-shopping-btn">Start Shopping</button>
+        </div>
       </ng-template>
     </div>
- 
+
     <!-- Favorites Section -->
     <div *ngIf="activeTab === 'Favorites'" class="favorites-section">
-      <h2>Your Favorites</h2>
-      <div *ngIf="favorites.length; else noFavs" class="fav-grid">
-        <div class="fav-card" *ngFor="let f of favorites">
-          <img [src]="f.image" alt="{{ f.title }}" />
-          <h4>{{ f.title }}</h4>
-          <p>{{ f.price | currency: 'INR' }}</p>
+      <div class="section-header-main">
+        <h2>Your Wish List</h2>
+        <div class="wishlist-actions">
+          <button class="manage-list-btn">Manage list</button>
         </div>
       </div>
- 
+      
+      <div *ngIf="favorites.length; else noFavs" class="favorites-grid">
+        <div class="favorite-item-card" *ngFor="let f of favorites">
+          <div class="favorite-image-container">
+            <img [src]="f.image" alt="{{ f.title }}" />
+            <button class="remove-favorite-btn">×</button>
+          </div>
+          <div class="favorite-details">
+            <h4 class="favorite-title">{{ f.title }}</h4>
+            <p class="favorite-price">₹{{ f.price | number:'1.2-2' }}</p>
+            <div class="favorite-actions">
+              <button class="add-to-cart-btn">Add to Cart</button>
+              <button class="move-to-list-btn">Move to another list</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <ng-template #noFavs>
-        <p class="empty">No favorites added yet ❤️</p>
+        <div class="empty-state">
+          <div class="empty-icon">❤️</div>
+          <h3>Your Wish List is empty</h3>
+          <p>Save items you're interested in to your wish list</p>
+          <button class="continue-shopping-btn">Continue Shopping</button>
+        </div>
       </ng-template>
     </div>
- 
+
     <!-- Address Section -->
     <div *ngIf="activeTab === 'Addresses'" class="address-section">
-      <h2>Saved Addresses</h2>
-      <div *ngIf="addresses.length; else noAddr">
-        <div class="address-card" *ngFor="let a of addresses">
-          <h4>{{ a.name }}</h4>
-          <p>{{ a.line1 }}, {{ a.city }}, {{ a.state }} - {{ a.zip }}</p>
-          <p>{{ a.phone }}</p>
+      <div class="section-header-main">
+        <h2>Your Addresses</h2>
+        <button class="add-address-btn">Add New Address</button>
+      </div>
+      
+      <div *ngIf="addresses.length; else noAddr" class="addresses-grid">
+        <div class="address-card-main" *ngFor="let a of addresses; let i = index">
+          <div class="address-header">
+            <h4>{{ a.name || 'Address ' + (i + 1) }}</h4>
+            <div class="address-actions">
+              <button class="edit-address-btn">Edit</button>
+              <button class="delete-address-btn">Delete</button>
+            </div>
+          </div>
+          
+          <div class="address-content">
+            <div class="address-lines">
+              <p *ngIf="a.line1"><strong>{{ a.line1 }}</strong></p>
+              <p *ngIf="a.line2">{{ a.line2 }}</p>
+              <p class="address-city-state" *ngIf="a.city || a.state || a.zip">
+                <span *ngIf="a.city">{{ a.city }}</span><span *ngIf="a.city && a.state">, </span><span *ngIf="a.state">{{ a.state }}</span>
+                <span *ngIf="a.zip"> - {{ a.zip }}</span>
+              </p>
+              <p *ngIf="a.country" class="address-country">{{ a.country }}</p>
+              
+              <!-- Show message if no address data -->
+              <div *ngIf="!a.line1 && !a.city && !a.state" class="no-address-message">
+                <p><em>No address information available. Please update your profile to add an address.</em></p>
+              </div>
+            </div>
+            
+            <div class="address-contact" *ngIf="a.phone">
+              <p><i class="phone-icon">📱</i> {{ a.phone }}</p>
+            </div>
+            
+            <div class="address-labels">
+              <span class="address-type-label">{{ a.type || 'Home' }}</span>
+              <span *ngIf="a.isDefault" class="default-label">Default</span>
+            </div>
+          </div>
         </div>
       </div>
- 
+
       <ng-template #noAddr>
-        <p class="empty">No addresses saved yet.</p>
+        <div class="empty-state">
+          <div class="empty-icon">🏠</div>
+          <h3>No addresses saved yet</h3>
+          <p>Add an address to make checkout faster</p>
+          <button class="add-first-address-btn">Add Your First Address</button>
+        </div>
       </ng-template>
     </div>
   </div>

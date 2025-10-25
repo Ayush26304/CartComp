@@ -5,51 +5,108 @@
   background: #f7f8fa;
   min-height: 100vh;
  
-  h2 {
+  // Header Section
+  .header-section {
     text-align: center;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    color: #111;
-  }
- 
-  .categories-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    list-style: none;
     margin-bottom: 2rem;
-    padding: 0;
- 
-    li {
-      background: #fff;
-      border: 1px solid #ddd;
-      padding: 0.6rem 1.2rem;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 500;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
- 
-      &:hover {
-        background: #ffd814;
-        border-color: #fcd200;
-        transform: translateY(-2px);
-      }
- 
-      &.active {
-        background: #ffa41c;
-        color: white;
-        border-color: #ffa41c;
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+  }
+
+  // Loading Spinner
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    
+    .spinner {
+      width: 3rem;
+      height: 3rem;
+      border: 3px solid #E6E6E6;
+      border-top: 3px solid #ffa41c;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      font-size: 1rem;
+      color: #666;
+    }
+  }
+
+  // Categories Navigation
+  .categories-nav {
+    margin-bottom: 2rem;
+    
+    h3 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    
+    .categories-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      list-style: none;
+      margin-bottom: 2rem;
+      padding: 0;
+   
+      li {
+        background: #fff;
+        border: 1px solid #ddd;
+        padding: 0.6rem 1.2rem;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+   
+        &:hover {
+          background: #ffd814;
+          border-color: #fcd200;
+          transform: translateY(-2px);
+        }
+   
+        &.active {
+          background: #ffa41c;
+          color: white;
+          border-color: #ffa41c;
+        }
       }
     }
   }
  
   .products-section {
-    h3 {
+    .section-header {
       text-align: center;
-      margin-bottom: 1.5rem;
-      color: #333;
+      margin-bottom: 2rem;
+      
+      h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #111;
+        margin-bottom: 0.5rem;
+      }
+      
+      .product-count {
+        color: #666;
+        font-size: 1rem;
+      }
     }
  
     .products-grid {
@@ -97,6 +154,7 @@
         padding: 1rem;
         text-align: center;
         flex: 1;
+        position: relative;
  
         .title {
           font-size: 1rem;
@@ -106,12 +164,16 @@
           height: 2.6em;
           overflow: hidden;
           text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
  
         .price {
           color: #b12704;
           font-weight: 600;
           margin-bottom: 0.8rem;
+          font-size: 1.1rem;
         }
  
         .btn {
@@ -123,28 +185,58 @@
           font-size: 0.9rem;
           cursor: pointer;
           transition: all 0.3s ease;
+          margin-right: 0.5rem;
  
           &:hover {
             background: #f90;
           }
         }
-        .heart{
+        
+        .heart {
           font-size: 1.4rem;
-          cursor:pointer;
+          cursor: pointer;
           color: #ccc;
           transition: all 0.3s ease;
           user-select: none;
+          position: absolute;
+          right: 1rem;
+          bottom: 1rem;
 
-          &:hover{
+          &:hover {
             transform: scale(1.2);
           }
-          &.active{
+          
+          &.active {
             color: #e63946;
             transform: scale(1.2);
-            text-shadow:0 0 5px rgba(230,57,70,0.5);
+            text-shadow: 0 0 5px rgba(230,57,70,0.5);
           }
         }
       }
     }
   }
+
+  // Empty States
+  .no-products, .no-categories {
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      
+      h3 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+      }
+      
+      p {
+        color: #666;
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

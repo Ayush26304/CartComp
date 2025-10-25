@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { CommonModule } from '@angular/common';
@@ -8,12 +8,16 @@ import { CommonModule } from '@angular/common';
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
-  imports:[ReactiveFormsModule,CommonModule, RouterLink]
+  standalone: true,
+  imports:[ReactiveFormsModule,CommonModule, RouterLink, FormsModule, RouterLinkActive]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   error: string = '';
 
+  ngOnInit(): void {
+    
+  }
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -23,7 +27,7 @@ export class LoginComponent {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      role: ['user', Validators.required]  
+     // role: ['user', Validators.required]  
     });
   }
  
@@ -35,15 +39,22 @@ export class LoginComponent {
       return;
     }
  
-    const { username, password, role } = this.loginForm.value;
-    
-    alert(`Login clicked: ${username}, ${role}`); // debug
- 
-    const success = this.authService.login(username, password,role);   //, role
-    if (success) {
-     this.router.navigate([role === 'admin' ? '/admin' : '/home']);
+  const { username, password } = this.loginForm.value;
+
+this.authService.login(username, password).subscribe({
+  next: () => {
+    // Navigate based on role
+    const role = this.authService.role;
+    if (role === 'ROLE_ADMIN' || role === 'ADMIN') {
+      this.router.navigate(['/admin-dashboard']);
     } else {
-      this.error = 'Invalid credentials';
+      this.router.navigate(['/home']);
     }
+  },
+  error: () => {
+    this.error = 'Login failed. Please try again.';
+  }
+});
+
   }
 }

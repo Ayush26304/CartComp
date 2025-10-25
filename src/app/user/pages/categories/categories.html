@@ -1,48 +1,82 @@
+<app-navbar *ngIf="showNavbar"></app-navbar>
 <div class="categories-container">
-  <h2>Shop by Categories</h2>
+  <!-- Header Section -->
+  <div class="header-section" *ngIf="showNavbar">
+    <h1>Browse Categories</h1>
+    <p>Discover products across all our categories</p>
+  </div>
  
-  <!-- Category List -->
-  <ul class="categories-list">
-    <li
-      *ngFor="let cat of categories"
-      (click)="loadProducts(cat)"
-      [class.active]="cat === selectedCategory"
-    >
-      {{ cat | titlecase }}
-    </li>
-  </ul>
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Category Navigation -->
+  <div *ngIf="!loading && categories.length" class="categories-nav">
+    <h3>Shop by Category</h3>
+    <ul class="categories-list">
+      <li
+        *ngFor="let category of categories"
+        (click)="loadProducts(category)"
+        [class.active]="category.id === selectedCategory?.id"
+      >
+        {{ category.name }}
+      </li>
+    </ul>
+  </div>
  
   <!-- Product Section -->
-  <div *ngIf="selectedCategory" class="products-section">
-    <h3>Products in {{ selectedCategory | titlecase }}</h3>
+  <div *ngIf="selectedCategory && !loading" class="products-section">
+    <div class="section-header">
+      <h2>{{ selectedCategory.name }}</h2>
+      <span class="product-count">{{ products.length }} products available</span>
+    </div>
  
-    <div class="products-grid">
+    <!-- No Products Message -->
+    <div *ngIf="!products.length" class="no-products">
+      <div class="empty-state">
+        <h3>No products found</h3>
+        <p>This category doesn't have any products yet.</p>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="products.length" class="products-grid">
       <div
         class="product-card"
-        *ngFor="let p of products"
-        (click)="openProduct(p.id)"
+        *ngFor="let product of products"
+        (click)="openProduct(product.id)"
       >
         <div class="image-wrapper">
-          <img [src]="p.image" alt="{{ p.title }}" />
+          <img [src]="product.imageUrl || 'https://via.placeholder.com/300x300?text=No+Image'" alt="{{ product.name }}" />
         </div>
         <div class="product-info">
-          <h4 class="title">{{ p.title }}</h4>
-          <p class="price">{{ p.price | currency: 'INR' }}</p>
+          <h4 class="title">{{ product.name }}</h4>
+          <p class="price">₹{{ product.price | number:'1.2-2' }}</p>
           <button
-            (click)="addToCart(p); $event.stopPropagation()"
+            (click)="addToCart(product); $event.stopPropagation()"
             class="btn"
           >
             Add to Cart
           </button>
           <span
             class="heart"
-            [class.active]="p.isFavorite"
-            (click)="toggleFavorite(p)"
+            [class.active]="product.isFavorite"
+            (click)="toggleFavorite(product); $event.stopPropagation()"
           >
             ♥
           </span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Empty Categories Message -->
+  <div *ngIf="!loading && !categories.length" class="no-categories">
+    <div class="empty-state">
+      <h3>No categories available</h3>
+      <p>Categories will appear here once they are added.</p>
     </div>
   </div>
 </div>

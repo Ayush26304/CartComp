@@ -3,27 +3,38 @@ import { LoginComponent } from './auth/login/login';
 import { SignupComponent } from './auth/signup/signup';
 import { UserHome } from './user/pages/home/user-home/user-home';
 import { AdminComponent } from './admin/pages/dashboard/admin-dashboard/admin-dashboard';
-//import { NavbarComponent } from './shared/components/navbar/navbar';
 import { CategoriesComponent } from './user/pages/categories/categories';
 import { ProductDescriptionComponent } from './user/product/product';
 import { CartComponent } from './user/cart/cart';
-import { UserProfile } from './user/userprofile/userprofile';
+import { UserProfileComponent } from './user/userprofile/userprofile';
 import { CheckoutComponent } from './user/checkout/checkout';
+import { OrderTrackingComponent } from './user/order-tracking/order-tracking';
+import { SearchResultsComponent } from './user/search-results/search-results';
 
 
  
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // Default route
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  
+  // Auth routes
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'home', component: UserHome},
-  { path: 'admin', component: AdminComponent },
-  //{ path:'navbar',component:NavbarComponent},
-  {path:'categories',component:CategoriesComponent},
-  {path:'product/:id',component:ProductDescriptionComponent},
-  {path:'cart',component:CartComponent},
-  {path:'userprofile',component:UserProfile},
-  {path:'checkout',component:CheckoutComponent}
-
+  
+  // Admin route
+  { path: 'admin-dashboard', component: AdminComponent },
+  
+  // User routes
+  { path: 'home', component: UserHome },
+  { path: 'categories', component: CategoriesComponent },
+  { path: 'product/:id', component: ProductDescriptionComponent },
+  { path: 'cart', component: CartComponent },
+  { path: 'userprofile', component: UserProfileComponent },
+  { path: 'checkout', component: CheckoutComponent },
+  { path: 'order-tracking/:id', component: OrderTrackingComponent },
+  { path: 'search', component: SearchResultsComponent },
+  
+  // Fallback route
+  { path: '**', redirectTo: 'home' }
 ];
  

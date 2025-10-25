@@ -1,3 +1,5 @@
+<app-navbar *ngIf="showNavbar"></app-navbar>
+
 <div class="checkout-container">
   <h2 class="checkout-title">Checkout</h2>
  
@@ -31,7 +33,13 @@
       </div>
       <hr />
       <p class="total"><strong>Total:</strong> ₹{{ totalPrice }}</p>
-      <button class="place-order-btn" (click)="placeOrder()">Place Your Order</button>
+      <button 
+        class="place-order-btn" 
+        (click)="placeOrder()" 
+        [disabled]="isProcessing || cartItems.length === 0">
+        <span *ngIf="isProcessing">Processing Order...</span>
+        <span *ngIf="!isProcessing">Place Your Order</span>
+      </button>
     </div>
   </div>
  
@@ -44,8 +52,16 @@
         <div class="checkmark-kick"></div>
       </div>
       <h3>Order Placed Successfully!</h3>
+      <div *ngIf="placedOrder">
+        <p><strong>Order ID:</strong> #{{placedOrder.orderId}}</p>
+        <p><strong>Invoice:</strong> {{placedOrder.invoiceNumber}}</p>
+        <p><strong>Total:</strong> ₹{{placedOrder.totalAmount}}</p>
+      </div>
       <p>Thank you for shopping with us ❤️</p>
-      <button (click)="closePopup()">Continue Shopping</button>
+      <div class="popup-actions">
+        <button (click)="viewOrderTracking()" class="track-btn">Track Order</button>
+        <button (click)="closePopup()" class="continue-btn">View Orders</button>
+      </div>
     </div>
   </div>
 </div>

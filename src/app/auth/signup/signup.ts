@@ -16,8 +16,10 @@ export class SignupComponent {
   constructor(private authService: AuthService, private router: Router) {}
  
   signup() {
-    this.authService.signup(this.username, this.password);
-    alert('Signup successful! Please login.');
-    this.router.navigate(['/login']);
+    this.authService.signup(this.username, this.password).subscribe((t)=>{
+      console.log(t);
+      alert('Signup successful! Please login.');
+      this.router.navigate(['/login']);
+    });
   }
 }

@@ -1,1 +1,304 @@
-<p>admin-dashboard</p>
+<div class="admin-dashboard">
+  <!-- Navigation Header -->
+  <div class="admin-header">
+    <div class="header-left">
+      <h1>Admin Dashboard</h1>
+    </div>
+    <div class="header-right">
+      <span class="admin-user">👑 Admin</span>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+    <nav class="admin-nav">
+      <button 
+        [class.active]="activeSection === 'overview'"
+        (click)="setActiveSection('overview')"
+        class="nav-btn"
+      >
+        Overview
+      </button>
+      <button 
+        [class.active]="activeSection === 'users'"
+        (click)="setActiveSection('users')"
+        class="nav-btn"
+      >
+        Users
+      </button>
+      <button 
+        [class.active]="activeSection === 'categories'"
+        (click)="setActiveSection('categories')"
+        class="nav-btn"
+      >
+        Categories
+      </button>
+      <button 
+        [class.active]="activeSection === 'products'"
+        (click)="setActiveSection('products')"
+        class="nav-btn"
+      >
+        Products
+      </button>
+      <button 
+        [class.active]="activeSection === 'orders'"
+        (click)="setActiveSection('orders')"
+        class="nav-btn"
+      >
+        Orders
+      </button>
+    </nav>
+  </div>
+
+  <!-- Content Area -->
+  <div class="admin-content">
+
+    <!-- Overview Section -->
+    <div *ngIf="activeSection === 'overview'" class="overview-section">
+      <h2>Dashboard Overview</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <h3>{{stats.totalUsers}}</h3>
+            <p>Total Users</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-info">
+            <h3>{{stats.totalProducts}}</h3>
+            <p>Total Products</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏷️</div>
+          <div class="stat-info">
+            <h3>{{stats.totalCategories}}</h3>
+            <p>Categories</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-info">
+            <h3>{{stats.totalOrders}}</h3>
+            <p>Total Orders</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Section -->
+    <div *ngIf="activeSection === 'users'" class="users-section">
+      <div class="section-header">
+        <h2>User Management</h2>
+        <button class="btn-primary" (click)="openUserModal()">Add New User</button>
+      </div>
+      
+      <div *ngIf="loading.users" class="loading">Loading users...</div>
+      
+      <div *ngIf="!loading.users" class="data-table">
+        <div class="debug-info" style="background: #f0f0f0; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
+          <p><strong>Debug Info:</strong></p>
+          <p>Users array length: {{users?.length || 0}}</p>
+          <p>Users array: {{users | json}}</p>
+        </div>
+        
+        <table *ngIf="users && users.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>{{user.id}}</td>
+              <td>{{user.username || 'N/A'}}</td>
+              <td>{{user.firstName}} {{user.lastName}}</td>
+              <td>{{user.email || 'N/A'}}</td>
+              <td>{{user.phoneNumber || 'N/A'}}</td>
+              <td>{{user.createdAt ? formatDate(user.createdAt) : 'N/A'}}</td>
+              <td>
+                <button class="btn-edit" (click)="editUser(user)">Edit</button>
+                <button class="btn-delete" (click)="deleteUser(user.id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div *ngIf="!users || users.length === 0" class="no-data">
+          <p>No users found or data not loaded yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div *ngIf="activeSection === 'categories'" class="categories-section">
+      <div class="section-header">
+        <h2>Category Management</h2>
+        <button class="btn-primary" (click)="openCategoryModal()">Add New Category</button>
+      </div>
+      
+      <div *ngIf="loading.categories" class="loading">Loading categories...</div>
+      
+      <div *ngIf="!loading.categories" class="data-table">
+        <div class="debug-info" style="background: #f0f0f0; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
+          <p><strong>Categories Debug Info:</strong></p>
+          <p>Categories array length: {{categories?.length || 0}}</p>
+          <p>Categories array: {{categories | json}}</p>
+        </div>
+        
+        <table *ngIf="categories && categories.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let category of categories">
+              <td>{{category.id}}</td>
+              <td>{{category.name}}</td>
+              <td>{{category.description}}</td>
+              <td>
+                <button class="btn-edit" (click)="editCategory(category)">Edit</button>
+                <button class="btn-delete" (click)="deleteCategory(category.id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div *ngIf="!categories || categories.length === 0" class="no-data">
+          <p>No categories found or data not loaded yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Section -->
+    <div *ngIf="activeSection === 'products'" class="products-section">
+      <div class="section-header">
+        <h2>Product Management</h2>
+        <button class="btn-primary" (click)="openProductModal()">Add New Product</button>
+      </div>
+      
+      <div *ngIf="loading.products" class="loading">Loading products...</div>
+      
+      <div *ngIf="!loading.products" class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of products">
+              <td>{{product.id}}</td>
+              <td>{{product.name}}</td>
+              <td>{{formatCurrency(product.price)}}</td>
+              <td>{{product.stock}}</td>
+              <td>{{product.categoryId}}</td>
+              <td>
+                <button class="btn-edit" (click)="editProduct(product)">Edit</button>
+                <button class="btn-delete" (click)="deleteProduct(product.id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Orders Section -->
+    <div *ngIf="activeSection === 'orders'" class="orders-section">
+      <div class="section-header">
+        <h2>Order Management</h2>
+      </div>
+      
+      <div *ngIf="loading.orders" class="loading">Loading orders...</div>
+      
+      <div *ngIf="!loading.orders" class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer ID</th>
+              <th>Customer Name</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orders">
+              <td>#{{order.id}}</td>
+              <td>{{order.userId || 'N/A'}}</td>
+              <td>{{order.customerName || 'N/A'}}</td>
+              <td>{{order.itemCount || 'N/A'}} items</td>
+              <td>{{formatCurrency(order.totalAmount)}}</td>
+              <td>
+                <select 
+                  [value]="order.status" 
+                  (change)="updateOrderStatus(order.id, $event)"
+                  class="status-select"
+                  [class]="'status-' + order.status?.toLowerCase()"
+                >
+                  <option value="PENDING">PENDING</option>
+                  <option value="CONFIRMED">CONFIRMED</option>
+                  <option value="PROCESSING">PROCESSING</option>
+                  <option value="SHIPPED">SHIPPED</option>
+                  <option value="DELIVERED">DELIVERED</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                </select>
+              </td>
+              <td>{{order.orderDate ? formatDate(order.orderDate) : 'N/A'}}</td>
+              <td>
+                <button class="btn-view" (click)="viewOrderDetails(order.id)">View Details</button>
+                <button class="btn-invoice" (click)="downloadInvoice(order.id)">Invoice</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modals -->
+  <app-user-modal
+    *ngIf="modals.user.visible"
+    [isVisible]="modals.user.visible"
+    [isEdit]="modals.user.isEdit"
+    [userData]="modals.user.data"
+    (close)="closeUserModal()"
+    (save)="onUserSaved($event)"
+  ></app-user-modal>
+
+  <app-category-modal
+    *ngIf="modals.category.visible"
+    [isVisible]="modals.category.visible"
+    [isEdit]="modals.category.isEdit"
+    [categoryData]="modals.category.data"
+    (close)="closeCategoryModal()"
+    (save)="onCategorySaved($event)"
+  ></app-category-modal>
+
+  <app-product-modal
+    *ngIf="modals.product.visible"
+    [isVisible]="modals.product.visible"
+    [isEdit]="modals.product.isEdit"
+    [productData]="modals.product.data"
+    (close)="closeProductModal()"
+    (save)="onProductSaved($event)"
+  ></app-product-modal>
+</div>

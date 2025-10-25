@@ -1,0 +1,353 @@
+.tracking-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  min-height: 100vh;
+
+  .tracking-header {
+    margin-bottom: 2rem;
+    
+    .back-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      transition: all 0.2s;
+      
+      &:hover {
+        background: #0056b3;
+      }
+    }
+    
+    h1 {
+      font-size: 2rem;
+      color: #212529;
+      margin: 0;
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    
+    .spinner {
+      width: 3rem;
+      height: 3rem;
+      border: 3px solid #e9ecef;
+      border-top: 3px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem auto;
+    }
+  }
+
+  .error {
+    text-align: center;
+    padding: 3rem;
+    color: #dc3545;
+    
+    button {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+  }
+
+  .tracking-content {
+    display: grid;
+    gap: 2rem;
+    
+    .order-summary-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        
+        h2 {
+          margin: 0;
+          color: #212529;
+        }
+        
+        .status-badge {
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          font-weight: 600;
+          font-size: 0.875rem;
+          text-transform: uppercase;
+          
+          &.placed { background: #e3f2fd; color: #1976d2; }
+          &.confirmed { background: #f3e5f5; color: #7b1fa2; }
+          &.shipped { background: #fff3e0; color: #f57c00; }
+          &.in-transit { background: #e8f5e8; color: #388e3c; }
+          &.delivered { background: #e8f5e8; color: #2e7d32; }
+        }
+      }
+      
+      .order-info {
+        .info-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.75rem;
+          
+          .label {
+            color: #6c757d;
+            font-weight: 500;
+          }
+          
+          .value {
+            font-weight: 600;
+            color: #212529;
+          }
+        }
+      }
+      
+      .order-actions {
+        margin-top: 1.5rem;
+        
+        .download-btn {
+          background: #28a745;
+          color: white;
+          border: none;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 500;
+          transition: all 0.2s;
+          
+          &:hover {
+            background: #218838;
+          }
+        }
+      }
+    }
+    
+    .tracking-progress {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      
+      h3 {
+        margin: 0 0 2rem 0;
+        color: #212529;
+        font-size: 1.25rem;
+      }
+      
+      .progress-timeline {
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          left: 20px;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: #e9ecef;
+          z-index: 1;
+        }
+        
+        .timeline-item {
+          position: relative;
+          padding-left: 4rem;
+          margin-bottom: 2rem;
+          
+          &.completed {
+            .marker-circle {
+              background: #28a745;
+              color: white;
+            }
+            
+            .timeline-content h4 {
+              color: #28a745;
+            }
+          }
+          
+          &.current {
+            .marker-circle {
+              background: #007bff;
+              color: white;
+              animation: pulse 2s infinite;
+            }
+            
+            .timeline-content h4 {
+              color: #007bff;
+            }
+          }
+          
+          .timeline-marker {
+            position: absolute;
+            left: 0;
+            top: 0;
+            
+            .marker-circle {
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: #e9ecef;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              z-index: 2;
+              position: relative;
+              border: 3px solid white;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+          }
+          
+          .timeline-content {
+            h4 {
+              margin: 0 0 0.5rem 0;
+              font-size: 1rem;
+              font-weight: 600;
+              text-transform: capitalize;
+            }
+            
+            p {
+              margin: 0 0 0.5rem 0;
+              color: #6c757d;
+              font-size: 0.875rem;
+            }
+            
+            .timeline-date {
+              font-size: 0.75rem;
+              color: #868e96;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+      
+      .estimated-delivery {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        
+        h4 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1rem;
+        }
+        
+        .delivery-date {
+          margin: 0;
+          font-size: 1.25rem;
+          font-weight: 600;
+        }
+      }
+    }
+    
+    .shipping-details, .order-items {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      
+      h3 {
+        margin: 0 0 1.5rem 0;
+        color: #212529;
+        font-size: 1.25rem;
+      }
+      
+      .address-card {
+        padding: 1.5rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        
+        p {
+          margin: 0 0 0.5rem 0;
+          
+          &.recipient-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #212529;
+          }
+          
+          &.phone {
+            margin-top: 1rem;
+            color: #007bff;
+            font-weight: 500;
+          }
+        }
+      }
+      
+      .items-list {
+        .item-card {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          border: 1px solid #e9ecef;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+          
+          .item-info {
+            h4 {
+              margin: 0 0 0.25rem 0;
+              color: #212529;
+              font-size: 1rem;
+            }
+            
+            .item-details {
+              margin: 0;
+              color: #6c757d;
+              font-size: 0.875rem;
+            }
+          }
+          
+          .item-total {
+            font-weight: 600;
+            color: #212529;
+            font-size: 1.1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  .tracking-container {
+    padding: 1rem;
+    
+    .tracking-content {
+      .order-summary-card, .tracking-progress, .shipping-details, .order-items {
+        padding: 1.5rem;
+      }
+      
+      .tracking-progress .progress-timeline .timeline-item {
+        padding-left: 3rem;
+      }
+    }
+  }
+}

@@ -1,31 +1,189 @@
 
+<app-navbar *ngIf="showNavbar"></app-navbar>
+
 <div class="product-page" *ngIf="!loading && product; else loadingBlock">
+  <!-- Simple Navigation -->
+  <div class="navigation">
+    <button (click)="navigateToShop()" class="back-btn">← Back to Categories</button>
+  </div>
+
   <div class="product-container">
-    <div class="product-image">
-      <img [src]="product.image" [alt]="product.title" />
+    <!-- Left Section: Product Images -->
+    <div class="product-images-section">
+      <div class="image-gallery">
+        <!-- Thumbnail Images -->
+        <div class="thumbnail-list">
+          <img 
+            *ngFor="let img of additionalImages; let i = index"
+            [src]="img || 'https://via.placeholder.com/300x300?text=No+Image'" 
+            [alt]="product.name"
+            [class.active]="i === selectedImageIndex"
+            (click)="selectImage(i)"
+            class="thumbnail"
+          />
+        </div>
+        
+        <!-- Main Image -->
+        <div class="main-image-container">
+          <img 
+            [src]="additionalImages[selectedImageIndex] || product.imageUrl || 'https://via.placeholder.com/500x500?text=No+Image'" 
+            [alt]="product.name" 
+            class="main-image"
+          />
+          <button 
+            class="favorite-overlay-btn"
+            [class.active]="isFavorite"
+            (click)="toggleFavorite()"
+          >
+            <i class="heart-icon">{{ isFavorite ? '♥' : '♡' }}</i>
+          </button>
+        </div>
+      </div>
     </div>
  
-    <div class="product-info">
-      <h1 class="title">{{ product.title }}</h1>
-      <p class="desc">{{ product.description }}</p>
- 
-      <div class="price">₹ {{ product.price }}</div>
- 
-      <div class="quantity-box">
-        <label for="qty">Quantity:</label>
-        <select id="qty" [(ngModel)]="quantity">
-          <option *ngFor="let q of quantityOptions" [value]="q">{{ q }}</option>
-        </select>
+    <!-- Middle Section: Product Details -->
+    <div class="product-details-section">
+      <h1 class="product-title">{{ product.name }}</h1>
+      
+      <!-- Simple Rating -->
+      <div class="rating-section">
+        <div class="stars">
+          <span class="star">★★★★☆</span>
+        </div>
+        <span class="rating-text">4.2/5 (1,234 reviews)</span>
       </div>
- 
-      <div class="btn-box">
-        <button class="btn-buy" (click)="buyNow()">Buy Now</button>
-        <button class="btn-cart" (click)="addToCart()">Add to Cart</button>
+
+      <!-- Price Section -->
+      <div class="price-section">
+        <div class="price-row">
+          <span class="price-label">Price:</span>
+          <span class="current-price">₹{{ product.price | number:'1.2-2' }}</span>
+        </div>
+        <div class="price-details">
+          <span class="inclusive-text">Inclusive of all taxes</span>
+        </div>
       </div>
+
+      <!-- Product Description -->
+      <div class="description-section">
+        <h3>About this item</h3>
+        <p class="product-description">{{ product.description }}</p>
+      </div>
+
+      <!-- Simple Product Info -->
+      <div class="product-info">
+        <div class="info-item">
+          <span class="label">Availability:</span>
+          <span [class]="product.stock > 0 ? 'in-stock' : 'out-of-stock'">
+            {{ product.stock > 0 ? 'In Stock' : 'Out of Stock' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Section: Purchase Options -->
+    <div class="purchase-section">
+      <div class="purchase-card">
+        <div class="price-display">
+          <span class="price-currency">₹</span>
+          <span class="price-amount">{{ product.price | number:'1.2-2' }}</span>
+        </div>
+
+        <!-- Stock Status -->
+        <div class="stock-info" [ngClass]="{
+          'in-stock': product.stock > 10,
+          'low-stock': product.stock > 0 && product.stock <= 10,
+          'out-of-stock': product.stock === 0
+        }">
+          <span *ngIf="product.stock > 10" class="stock-text">In Stock</span>
+          <span *ngIf="product.stock > 0 && product.stock <= 10" class="stock-text">
+            Only {{ product.stock }} left in stock
+          </span>
+          <span *ngIf="product.stock === 0" class="stock-text">Currently unavailable</span>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div class="quantity-section" *ngIf="product.stock > 0">
+          <label class="quantity-label">Quantity:</label>
+          <div class="quantity-controls">
+            <button 
+              class="quantity-btn decrease"
+              (click)="decreaseQuantity()"
+              [disabled]="quantity <= 1"
+            >-</button>
+            <span class="quantity-display">{{ quantity }}</span>
+            <button 
+              class="quantity-btn increase"
+              (click)="increaseQuantity()"
+              [disabled]="quantity >= product.stock"
+            >+</button>
+          </div>
+          <select class="quantity-dropdown" [(ngModel)]="quantity">
+            <option 
+              *ngFor="let q of quantityOptions" 
+              [value]="q" 
+              [disabled]="q > product.stock"
+            >
+              {{ q }}
+            </option>
+          </select>
+        </div>
+ 
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button 
+            class="add-to-cart-btn"
+            [disabled]="product.stock === 0"
+            (click)="addToCart()"
+          >
+            <i class="cart-icon">🛒</i>
+            Add to Cart
+          </button>
+          
+          <button 
+            class="buy-now-btn"
+            [disabled]="product.stock === 0"
+            (click)="buyNow()"
+          >
+            Buy Now
+          </button>
+        </div>
+
+        <!-- Additional Options -->
+        <div class="additional-options">
+          <button class="option-btn" (click)="toggleFavorite()">
+            <i class="heart-icon">{{ isFavorite ? '♥' : '♡' }}</i>
+            {{ isFavorite ? 'Remove from' : 'Add to' }} Wish List
+          </button>
+          
+          <button class="option-btn" (click)="shareProduct()">
+            <i class="share-icon">📤</i>
+            Share
+          </button>
+        </div>
+
+        <!-- Simple Delivery Info -->
+        <div class="delivery-info">
+          <p>🚚 Free Delivery Available</p>
+          <p>📋 7-day Return Policy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simple Reviews Section -->
+  <div class="reviews-section" id="reviews">
+    <h3>Customer Reviews</h3>
+    <div class="rating-overview">
+      <span class="rating">★★★★☆ 4.2/5</span>
+      <span class="review-count">(1,234 reviews)</span>
     </div>
   </div>
 </div>
  
 <ng-template #loadingBlock>
-  <div class="loading">Loading product details...</div>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading product details...</p>
+  </div>
 </ng-template>

@@ -1,42 +1,56 @@
 
 
-import { Component,signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { AuthService } from '../../../auth/auth.service';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { CartService } from '../../../user/cartservice';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.scss'],
 })
-
 export class NavbarComponent {
-  isMenuOpen:boolean = false;
-  isLoggedIn = false;
+  isMenuOpen: boolean = false;
+  isLoggedIn: boolean | null = false;
   userRole: string | null = null;
-  //username = signal<string|null>("");
-  username : string|null = null;
-  //cartItemCount = signal(0);
+  username: string | null = null;
+  cartItemCount: number = 0;
+  searchQuery: string = '';
 
-  constructor(private authService: AuthService) {
-    this.authService.isLoggedIn$.subscribe((status: boolean) => {
-      this.isLoggedIn = status;
+  constructor(private authService: AuthService, private cartService: CartService, private router: Router) {
+    this.authService.token$.subscribe(token => {
+      this.isLoggedIn = !!token;
     });
 
-    this.authService.userRole$.subscribe(role => {
+    this.authService.role$.subscribe(role => {
       this.userRole = role;
     });
-    this.authService.user$.subscribe(user => {
-    //  this.username.set(user);
+    this.authService.username$.subscribe(user => {
       this.username = user;
+    });
+
+    // Subscribe to cart changes to update count
+    this.cartService.cart$.subscribe(items => {
+      this.cartItemCount = this.cartService.getTotalQuantity();
     });
   }
 
   logout() {
     this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  onSearch() {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/search'], { 
+        queryParams: { q: this.searchQuery.trim() } 
+      });
+    }
   }
 
   // countCartItems() {

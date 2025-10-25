@@ -1,0 +1,111 @@
+<app-navbar></app-navbar>
+
+<div class="tracking-container">
+  <div class="tracking-header">
+    <button class="back-btn" (click)="goBack()">← Back to Orders</button>
+    <h1>Order Tracking</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading order details...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{error}}</p>
+    <button (click)="goBack()">Go Back</button>
+  </div>
+
+  <div *ngIf="orderDetails && !loading" class="tracking-content">
+    <!-- Order Summary -->
+    <div class="order-summary-card">
+      <div class="order-header">
+        <h2>Order #{{orderDetails.orderId}}</h2>
+        <span class="status-badge" [class]="getStatusClass(orderDetails.status)">
+          {{orderDetails.status.replace('_', ' ')}}
+        </span>
+      </div>
+      
+      <div class="order-info">
+        <div class="info-row">
+          <span class="label">Invoice Number:</span>
+          <span class="value">{{orderDetails.invoiceNumber}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Order Date:</span>
+          <span class="value">{{formatDate(orderDetails.orderDate)}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Total Amount:</span>
+          <span class="value">₹{{orderDetails.totalAmount}}</span>
+        </div>
+      </div>
+
+      <div class="order-actions">
+        <button class="download-btn" (click)="downloadInvoice()">
+          📄 Download Invoice
+        </button>
+      </div>
+    </div>
+
+    <!-- Tracking Progress -->
+    <div class="tracking-progress" *ngIf="trackingInfo">
+      <h3>Order Progress</h3>
+      <div class="progress-timeline">
+        <div *ngFor="let step of trackingInfo.trackingSteps" 
+             class="timeline-item" 
+             [class.completed]="step.completed"
+             [class.current]="step.status === trackingInfo.currentStatus">
+          
+          <div class="timeline-marker">
+            <div class="marker-circle">
+              <span *ngIf="step.completed">✓</span>
+              <span *ngIf="!step.completed && step.status === trackingInfo.currentStatus">●</span>
+            </div>
+          </div>
+          
+          <div class="timeline-content">
+            <h4>{{step.status.replace('_', ' ')}}</h4>
+            <p>{{step.description}}</p>
+            <span class="timeline-date" *ngIf="step.date">
+              {{formatDate(step.date)}}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="estimated-delivery" *ngIf="trackingInfo.estimatedDelivery">
+        <h4>Estimated Delivery</h4>
+        <p class="delivery-date">{{formatDate(trackingInfo.estimatedDelivery)}}</p>
+      </div>
+    </div>
+
+    <!-- Shipping Details -->
+    <div class="shipping-details">
+      <h3>Shipping Address</h3>
+      <div class="address-card">
+        <p class="recipient-name">{{orderDetails.shipping.fullName}}</p>
+        <p>{{orderDetails.shipping.address}}</p>
+        <p>{{orderDetails.shipping.city}}, {{orderDetails.shipping.state}} {{orderDetails.shipping.zipCode}}</p>
+        <p>{{orderDetails.shipping.country}}</p>
+        <p class="phone">📞 {{orderDetails.shipping.phone}}</p>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="order-items">
+      <h3>Order Items</h3>
+      <div class="items-list">
+        <div *ngFor="let item of orderDetails.items" class="item-card">
+          <div class="item-info">
+            <h4>{{item.productName}}</h4>
+            <p class="item-details">Quantity: {{item.quantity}} × ₹{{item.price}}</p>
+          </div>
+          <div class="item-total">
+            ₹{{item.quantity * item.price}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,59 +1,143 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CategoriesService } from '../pages/categoriesservice';
+import { CategoriesService, ProductDto } from '../pages/categoriesservice';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../cartservice';
+import { NavbarComponent } from '../../shared/components/navbar/navbar';
 
- 
 @Component({
   selector: 'app-product',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule, NavbarComponent],
   templateUrl: './product.html',
-  styleUrl: './product.scss'
+  styleUrl: './product.scss',
+  standalone: true
 })
 export class ProductDescriptionComponent implements OnInit {
-  product: any;
+  @Input() isChildComponent: boolean = false;
+  product: ProductDto | null = null;
   quantity: number = 1;
-  quantityOptions: number[] = [1, 2, 3, 4, 5];
+  quantityOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   loading = true;
+  selectedImageIndex = 0;
+  isFavorite = false;
+  showNavbar: boolean = true;
+  
+  // Mock additional product images for demonstration
+  additionalImages: string[] = [];
  
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private categoryService: CategoriesService,
     private cartservice: CartService
   ) {}
  
   ngOnInit(): void {
+    // Check if this component is being used as a child
+    this.showNavbar = !this.isChildComponent && !this.route.parent;
+    
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.categoryService.getProductById(+id).subscribe({
         next: (res) => {
           this.product = res;
           this.loading = false;
+          // Generate additional mock images for carousel
+          this.generateAdditionalImages();
         },
-        error: () => (this.loading = false)
+        error: (error) => {
+          console.error('Error loading product:', error);
+          this.loading = false;
+        }
       });
     }
   }
-  
-  navigatetoshop(){
-    
-  }
-  
 
-  addToCart() {
-    
-    if(this.cartservice && this.product){
-      this.cartservice.addToCart({id: this.product.id,image:this.product.image,title:this.product.title,price:this.product.price},this.quantity);
-     alert(`${this.product.title} added to cart  successfully!`);
+  generateAdditionalImages(): void {
+    if (this.product?.imageUrl) {
+      this.additionalImages = [
+        this.product.imageUrl,
+        this.product.imageUrl + '?variant=1',
+        this.product.imageUrl + '?variant=2',
+        this.product.imageUrl + '?variant=3'
+      ];
     }
-    
+  }
 
+  selectImage(index: number): void {
+    this.selectedImageIndex = index;
+  }
+
+  increaseQuantity(): void {
+    if (this.product && this.quantity < this.product.stock) {
+      this.quantity++;
+    }
+  }
+
+  decreaseQuantity(): void {
+    if (this.quantity > 1) {
+      this.quantity--;
+    }
+  }
+
+  toggleFavorite(): void {
+    this.isFavorite = !this.isFavorite;
+    // TODO: Implement favorites service
+    const action = this.isFavorite ? 'added to' : 'removed from';
+    console.log(`Product ${action} favorites`);
+  }
+
+  navigateToShop(): void {
+    this.router.navigate(['/categories']);
+  }
+
+  addToCart(): void {
+    if (this.cartservice && this.product) {
+      const cartItem = {
+        id: this.product.id,
+        image: this.product.imageUrl,
+        title: this.product.name,
+        price: this.product.price
+      };
+      
+      this.cartservice.addToCart(cartItem, this.quantity).subscribe({
+        next: (response) => {
+          alert(`${this.product?.name} added to cart successfully!`);
+          console.log('Add to cart response:', response);
+        },
+        error: (error) => {
+          console.error('Error adding to cart:', error);
+          alert(`Failed to add ${this.product?.name} to cart. Please try again.`);
+        }
+      });
+    }
   }
  
-  buyNow() {
-    alert(`Proceeding to buy ${this.product.title}`);
+  buyNow(): void {
+    if (this.product) {
+      // Add to cart first, then navigate to checkout
+      this.addToCart();
+      this.router.navigate(['/checkout']);
+    }
+  }
+
+  shareProduct(): void {
+    if (navigator.share && this.product) {
+      navigator.share({
+        title: this.product.name,
+        text: this.product.description,
+        url: window.location.href
+      });
+    } else {
+      // Fallback: Copy URL to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      alert('Product link copied to clipboard!');
+    }
+  }
+
+  getTomorrowDate(): Date {
+    return new Date(Date.now() + 86400000); // Add 24 hours (86400000 ms)
   }
 }

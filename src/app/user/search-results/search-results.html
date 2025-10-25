@@ -1,0 +1,101 @@
+<app-navbar></app-navbar>
+
+<div class="search-container">
+  <!-- Search Header -->
+  <div class="search-header">
+    <div class="search-info">
+      <h1>Search Results</h1>
+      <p *ngIf="searchQuery">
+        <span class="query-text">"{{searchQuery}}"</span>
+        <span class="result-count" *ngIf="!loading">
+          ({{products.length}} {{products.length === 1 ? 'result' : 'results'}})
+        </span>
+      </p>
+    </div>
+    
+    <!-- New Search Bar -->
+    <div class="new-search-bar">
+      <div class="search-input-group">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          placeholder="Search for products..."
+          class="search-input"
+          (keypress.enter)="newSearch()"
+        />
+        <button class="search-btn" (click)="newSearch()">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="search-main">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Searching products...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="error-container">
+      <div class="error-icon">⚠️</div>
+      <h3>Error</h3>
+      <p>{{error}}</p>
+      <button class="retry-btn" (click)="searchProducts()">Try Again</button>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="!loading && !error && products.length === 0 && searchQuery" class="no-results">
+        <div class="no-results-icon">🔍</div>
+        <h3>No products found</h3>
+        <p>We couldn't find any products matching <strong>"{{searchQuery}}"</strong></p>
+        <div class="suggestions">
+          <h4>Try:</h4>
+          <ul>
+            <li>Checking your spelling</li>
+            <li>Using different keywords</li>
+            <li>Searching for more general terms</li>
+          </ul>
+        </div>
+      </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!loading && !error && products.length > 0" class="products-grid">
+      <div 
+        *ngFor="let product of products" 
+        class="product-card"
+        (click)="openProduct(product.id)"
+      >
+        <div class="image-wrapper">
+          <img [src]="product.imageUrl" [alt]="product.name" />
+        </div>
+        
+        <div class="product-info">
+          <h4 class="title">{{product.name}}</h4>
+          <p class="price">₹{{product.price | number:'1.2-2'}}</p>
+          
+          <div class="product-actions" (click)="$event.stopPropagation()">
+            <button 
+              class="add-to-cart-btn" 
+              (click)="addToCart(product)"
+            >
+              Add to Cart
+            </button>
+            
+            <button 
+              class="heart-btn" 
+              [class.active]="product.isFavorite"
+              (click)="toggleFavorite(product)"
+            >
+              ♡
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
