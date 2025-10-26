@@ -1,0 +1,91 @@
+<footer class="footer">
+  <div class="footer-container">
+    <!-- Main Footer Content -->
+    <div class="footer-main">
+      <!-- Company Info -->
+      <div class="footer-section company-info">
+        <div class="logo">
+          <h3>KartCom</h3>
+          <p class="tagline">Your Ultimate Shopping Destination</p>
+        </div>
+        <p class="company-description">
+          Discover amazing products at unbeatable prices. Shop with confidence and enjoy fast, reliable delivery.
+        </p>
+        <div class="social-links">
+          <a 
+            *ngFor="let social of socialLinks" 
+            [href]="social.url" 
+            [title]="social.name"
+            class="social-link"
+            target="_blank"
+          >
+            {{ social.icon }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li *ngFor="let link of quickLinks">
+            <a [routerLink]="link.route">{{ link.name }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Customer Support -->
+      <div class="footer-section">
+        <h4>Customer Support</h4>
+        <ul class="footer-links">
+          <li *ngFor="let link of supportLinks">
+            <a [href]="link.route">{{ link.name }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div class="footer-section">
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li *ngFor="let link of companyLinks">
+            <a [href]="link.route">{{ link.name }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-section contact-info">
+        <h4>Get in Touch</h4>
+        <div class="contact-details">
+          <p class="contact-item">
+            <span class="icon">📧</span>
+            <span>support@kartcom.com</span>
+          </p>
+          <p class="contact-item">
+            <span class="icon">📞</span>
+            <span>+91 1800-123-4567</span>
+          </p>
+          <p class="contact-item">
+            <span class="icon">📍</span>
+            <span>Mumbai, Maharashtra, India</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="copyright">
+          <p>&copy; {{ currentYear }} KartCom. All rights reserved.</p>
+        </div>
+        <div class="back-to-top">
+          <button (click)="scrollToTop()" class="back-to-top-btn" title="Back to Top">
+            ↑ Top
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

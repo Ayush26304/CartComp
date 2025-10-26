@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { FooterComponent } from '../../shared/components/footer/footer';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.html',
   styleUrls: ['./cart.scss'],
-  imports:[FormsModule,CommonModule,NavbarComponent]
+  imports:[FormsModule, CommonModule, NavbarComponent, FooterComponent]
 })
 export class CartComponent implements OnInit {
   @Input() isChildComponent: boolean = false;
@@ -22,8 +23,8 @@ export class CartComponent implements OnInit {
   constructor(private cartService: CartService, private router: Router, private route: ActivatedRoute) {}
  
   ngOnInit(): void {
-    // Check if this component is being used as a child
-    this.showNavbar = !this.isChildComponent && !this.route.parent;
+    // Show navbar unless explicitly used as child component
+    this.showNavbar = !this.isChildComponent;
     
     // Load cart from backend and subscribe to changes
     this.cartService.loadCartFromBackend();

@@ -443,18 +443,19 @@
             gap: 0.75rem;
             
             .add-to-cart-btn {
-              background: #28a745;
+              background: #ffa41c;
               border: none;
-              border-radius: 4px;
+              border-radius: 20px;
               color: white;
               padding: 0.5rem 1rem;
               font-size: 0.85rem;
               cursor: pointer;
               transition: all 0.2s ease;
-              font-weight: normal;
+              font-weight: 500;
               
               &:hover {
-                background: #218838;
+                background: #f90;
+                transform: translateY(-2px);
               }
             }
             

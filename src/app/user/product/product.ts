@@ -6,10 +6,11 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../cartservice';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { FooterComponent } from '../../shared/components/footer/footer';
 
 @Component({
   selector: 'app-product',
-  imports: [FormsModule, CommonModule, NavbarComponent],
+  imports: [FormsModule, CommonModule, NavbarComponent, FooterComponent],
   templateUrl: './product.html',
   styleUrl: './product.scss',
   standalone: true
@@ -35,8 +36,8 @@ export class ProductDescriptionComponent implements OnInit {
   ) {}
  
   ngOnInit(): void {
-    // Check if this component is being used as a child
-    this.showNavbar = !this.isChildComponent && !this.route.parent;
+    // Show navbar unless explicitly used as child component
+    this.showNavbar = !this.isChildComponent;
     
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {

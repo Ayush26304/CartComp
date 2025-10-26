@@ -32,17 +32,19 @@
 }
  
 .shop-now-btn {
-  background-color: #ff9900;
+  background-color: #ffa41c;
   color: #fff;
   border: none;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
  
 .shop-now-btn:hover {
-  background-color: #e68a00;
+  background-color: #f90;
+  transform: translateY(-2px);
 }
  
 .cart-items {
@@ -127,33 +129,36 @@
 }
  
 .clear-btn {
-  background-color: #ff9900;
+  background-color: #dc3545;
   border: none;
   padding: 10px 18px;
-  border-radius: 8px;
+  border-radius: 20px;
   color: white;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
  
 .clear-btn:hover {
-  background-color: #e68a00;
+  background-color: #c82333;
+  transform: translateY(-2px);
 }
  
 .checkout-btn {
-  background-color: #463df9;
+  background-color: #ffa41c;
   border: none;
   margin-left: 25px;
   padding: 10px 20px;
-  border-radius: 8px;
-  color: #fffefe;
+  border-radius: 20px;
+  color: #fff;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
  
 .checkout-btn:hover {
-  background-color: #3527f8;
+  background-color: #f90;
+  transform: translateY(-2px);
 }
  
 @keyframes fadeIn {

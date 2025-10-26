@@ -4,12 +4,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { FooterComponent } from '../../shared/components/footer/footer';
 import { OrderService, OrderRequestDto, OrderResponseDto, ShippingInfo } from '../order.service';
  
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.html',
-  imports:[FormsModule,CommonModule,NavbarComponent],
+  imports:[FormsModule, CommonModule, NavbarComponent, FooterComponent],
   styleUrls: ['./checkout.scss']
 })
 export class CheckoutComponent implements OnInit {
@@ -31,8 +32,8 @@ export class CheckoutComponent implements OnInit {
   ) {}
  
   ngOnInit() {
-    // Check if this component is being used as a child
-    this.showNavbar = !this.isChildComponent && !this.route.parent;
+    // Show navbar unless explicitly used as child component
+    this.showNavbar = !this.isChildComponent;
     
     // Load cart from backend and subscribe to changes
     this.cartService.loadCartFromBackend();

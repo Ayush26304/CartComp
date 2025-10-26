@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
+import { FooterComponent } from '../../../shared/components/footer/footer';
 import { NavigationService } from '../../../shared/services/navigation.service';
 import { CartService } from '../../cartservice';
 
@@ -11,7 +12,7 @@ import { CartService } from '../../cartservice';
   selector: 'app-categories',
   templateUrl: './categories.html',
   styleUrls: ['./categories.scss'],
-  imports: [FormsModule, CommonModule, NavbarComponent],
+  imports: [FormsModule, CommonModule, NavbarComponent, FooterComponent],
   standalone: true
 })
 export class CategoriesComponent implements OnInit {
@@ -31,8 +32,9 @@ export class CategoriesComponent implements OnInit {
   ) {}
  
   ngOnInit(): void {
-    // Check if this component is being used as a child in home
-    this.showNavbar = !this.isChildComponent && !this.route.parent;
+    // Check if this component is being used as a child component
+    this.showNavbar = !this.isChildComponent;
+    console.log('Categories component - isChildComponent:', this.isChildComponent, 'showNavbar:', this.showNavbar);
     this.loadCategories();
   }
  

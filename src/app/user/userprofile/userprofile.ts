@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UserProfileService } from '../userprofile';
 import { AuthService } from '../../auth/auth.service';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { FooterComponent } from '../../shared/components/footer/footer';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService, OrderResponseDto } from '../order.service';
 
@@ -11,7 +12,7 @@ import { OrderService, OrderResponseDto } from '../order.service';
   selector: 'app-userprofile',
   templateUrl: './userprofile.html',
   styleUrls: ['./userprofile.scss'],
-  imports: [CommonModule, ReactiveFormsModule, NavbarComponent],
+  imports: [CommonModule, ReactiveFormsModule, NavbarComponent, FooterComponent],
   standalone: true
 })
 export class UserProfileComponent implements OnInit {
@@ -54,8 +55,8 @@ export class UserProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check if this component is being used as a child
-    this.showNavbar = !this.isChildComponent && !this.route.parent;
+    // Show navbar unless explicitly used as child component
+    this.showNavbar = !this.isChildComponent;
     
     // Debug: Log JWT claims to see what's available
     if (this.auth.token) {

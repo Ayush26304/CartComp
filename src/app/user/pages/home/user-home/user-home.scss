@@ -13,15 +13,18 @@
   margin-bottom: 20px;
 }
 .btn {
-  background: #333;
+  background: #ffa41c;
   color: #fff;
   border: none;
   padding: 10px 20px;
-  border-radius: 4px;
+  border-radius: 20px;
   cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 .btn:hover {
-  background: #555;
+  background: #f90;
+  transform: translateY(-2px);
 }
  
 /* Categories */
@@ -60,14 +63,32 @@
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.product-card img {
-  max-width: 100%;
-  border-radius: 6px;
+  
+  img {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+  
+  .btn {
+    background: #ffa41c;
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+
+    &:hover {
+      background: #f90;
+    }
+  }
 }
 .price {
   font-weight: bold;
   margin: 10px 0;
+  color: #b12704;
 }
  
 /* Newsletter */

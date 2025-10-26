@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { FooterComponent } from '../../shared/components/footer/footer';
 import { OrderService, OrderResponseDto } from '../order.service';
 
 @Component({
   selector: 'app-order-tracking',
   templateUrl: './order-tracking.html',
   styleUrls: ['./order-tracking.scss'],
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule, NavbarComponent, FooterComponent],
   standalone: true
 })
 export class OrderTrackingComponent implements OnInit {
