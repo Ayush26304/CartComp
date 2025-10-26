@@ -180,3 +180,14 @@
     transform: translateY(-10px);
   }
 }
+
+// Style for items being removed
+.cart-item.removing {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  
+  .remove-btn {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}

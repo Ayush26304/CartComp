@@ -75,7 +75,7 @@ export class AuthService {
     return !!this.tokenSubject.value;
   }
 
-  // Helper method to get all JWT claims for debugging
+  
   getJwtClaims(): any {
     const token = this.tokenSubject.value;
     if (!token) return null;

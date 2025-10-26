@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { CartService } from '../cartservice';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
 import { FooterComponent } from '../../shared/components/footer/footer';
 import { OrderService, OrderRequestDto, OrderResponseDto, ShippingInfo } from '../order.service';
+import { Subscription } from 'rxjs';
  
 @Component({
   selector: 'app-checkout',
@@ -13,7 +14,7 @@ import { OrderService, OrderRequestDto, OrderResponseDto, ShippingInfo } from '.
   imports:[FormsModule, CommonModule, NavbarComponent, FooterComponent],
   styleUrls: ['./checkout.scss']
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   @Input() isChildComponent: boolean = false;
   @ViewChild('addressForm') addressForm!: NgForm;
   
@@ -22,6 +23,7 @@ export class CheckoutComponent implements OnInit {
   showSuccess = false;
   showNavbar: boolean = true;
   placedOrder: OrderResponseDto | null = null;
+  private cartSubscription?: Subscription;
   isProcessing = false;
  
   constructor(
@@ -35,12 +37,24 @@ export class CheckoutComponent implements OnInit {
     // Show navbar unless explicitly used as child component
     this.showNavbar = !this.isChildComponent;
     
-    // Load cart from backend and subscribe to changes
-    this.cartService.loadCartFromBackend();
-    this.cartService.cart$.subscribe(items => {
+    // Subscribe to cart changes first
+    this.cartSubscription = this.cartService.cart$.subscribe(items => {
       this.cartItems = items;
       this.totalPrice = this.cartService.getTotalPrice();
     });
+
+    // Only load from backend if cart is empty (avoid unnecessary calls)
+    if (this.cartService.getCartItems().length === 0) {
+      console.log('Cart is empty in checkout, loading from backend...');
+      this.cartService.loadCartFromBackend();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Unsubscribe to prevent memory leaks
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
   }
  
   placeOrder() {
