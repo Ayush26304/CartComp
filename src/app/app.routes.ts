@@ -11,6 +11,8 @@ import { UserProfileComponent } from './user/userprofile/userprofile';
 import { CheckoutComponent } from './user/checkout/checkout';
 import { OrderTrackingComponent } from './user/order-tracking/order-tracking';
 import { SearchResultsComponent } from './user/search-results/search-results';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 
  
@@ -21,6 +23,7 @@ export const routes: Routes = [
   { 
     path: 'home', 
     component: UserHome,
+    canActivate: [AuthGuard],
     children: [
       { path: 'categories', component: CategoriesComponent },
       { path: 'product/:id', component: ProductDescriptionComponent },
@@ -29,14 +32,14 @@ export const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent }
     ]
   },
-  { path: 'admin', component: AdminComponent },
-  // Standalone routes (with navbar)
-  { path: 'categories', component: CategoriesComponent },
-  { path: 'product/:id', component: ProductDescriptionComponent },
-  { path: 'cart', component: CartComponent },
-  { path: 'userprofile', component: UserProfileComponent },
-  { path: 'checkout', component: CheckoutComponent },
-  { path: 'order-tracking/:id', component: OrderTrackingComponent },
-  { path: 'search', component: SearchResultsComponent }
+  { path: 'admin', component: AdminComponent, canActivate: [AdminGuard] },
+  // Standalone routes (with navbar) - Protected
+  { path: 'categories', component: CategoriesComponent, canActivate: [AuthGuard] },
+  { path: 'product/:id', component: ProductDescriptionComponent, canActivate: [AuthGuard] },
+  { path: 'cart', component: CartComponent, canActivate: [AuthGuard] },
+  { path: 'userprofile', component: UserProfileComponent, canActivate: [AuthGuard] },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
+  { path: 'order-tracking/:id', component: OrderTrackingComponent, canActivate: [AuthGuard] },
+  { path: 'search', component: SearchResultsComponent, canActivate: [AuthGuard] }
 ];
  
