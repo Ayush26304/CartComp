@@ -63,7 +63,15 @@ export class OrderService {
   // Get specific order by ID
   getOrderById(orderId: number): Observable<OrderResponseDto> {
     return this.http.get<OrderResponseDto>(
-      `${this.apiUrl}/${orderId}`, 
+      `${this.apiUrl}/user/${orderId}`, 
+      { headers: this.getHeaders() }
+    );
+  }
+
+  // Track order by invoice number
+  trackOrderByInvoice(invoiceNumber: string): Observable<OrderResponseDto> {
+    return this.http.get<OrderResponseDto>(
+      `${this.apiUrl}/track/${invoiceNumber}`, 
       { headers: this.getHeaders() }
     );
   }
@@ -87,10 +95,11 @@ export class OrderService {
     );
   }
 
-  // Track order by invoice number
-  trackOrderByInvoice(invoiceNumber: string): Observable<OrderResponseDto> {
-    return this.http.get<OrderResponseDto>(
-      `${this.apiUrl}/track/${invoiceNumber}`, 
+  // Cancel an order (change status to CANCELLED)
+  cancelOrder(orderId: number): Observable<OrderResponseDto> {
+    return this.http.put<OrderResponseDto>(
+      `${this.apiUrl}/cancel/${orderId}`, 
+      {}, 
       { headers: this.getHeaders() }
     );
   }

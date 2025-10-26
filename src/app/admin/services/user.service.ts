@@ -1,103 +1,75 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 
 export interface UserProfileDto {
   id: number;
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  dateOfBirth?: string;
-  profilePictureUrl?: string;
-  createdAt: string;
-  updatedAt?: string;
-  role?: string;
-  isActive?: boolean;
-}
-
-export interface UpdateProfileDto {
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  dateOfBirth?: string;
-}
-
-export interface MinimalProfileDto {
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  password?: string;
+  phoneNumber: string;
+  createdAt?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = 'http://localhost:8056/api/user';
-  
-  constructor(private http: HttpClient, private auth: AuthService) {}
+  private apiUrl = 'http://localhost:8056/api/user';
 
-  private getHeaders() {
-    return { Authorization: `Bearer ${this.auth.token}` };
-  }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
-  // Test endpoint
-  testConnection(): Observable<string> {
-    return this.http.get<string>(`${this.baseUrl}/hi`, {
-      headers: this.getHeaders()
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.token;
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
   }
 
-  // Get all users (Admin only)
   getAllUsers(): Observable<UserProfileDto[]> {
-    return this.http.get<UserProfileDto[]>(`${this.baseUrl}/all`, {
+    return this.http.get<UserProfileDto[]>(`${this.apiUrl}/all`, {
       headers: this.getHeaders()
     });
   }
 
-  // Get user by ID (Admin only)
   getUserById(id: number): Observable<UserProfileDto> {
-    return this.http.get<UserProfileDto>(`${this.baseUrl}/${id}`, {
+    return this.http.get<UserProfileDto>(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders()
     });
   }
 
-  // Get current user profile (User)
-  getCurrentUserProfile(): Observable<UserProfileDto> {
-    return this.http.get<UserProfileDto>(`${this.baseUrl}/profile`, {
+  createUser(user: any): Observable<UserProfileDto> {
+    return this.http.post<UserProfileDto>(`${this.apiUrl}/create`, user, {
       headers: this.getHeaders()
     });
   }
 
-  // Update user (User/Admin)
-  updateUser(id: number, updateData: UpdateProfileDto): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/${id}`, updateData, {
+  updateUser(id: number, user: any): Observable<UserProfileDto> {
+    return this.http.put<UserProfileDto>(`${this.apiUrl}/${id}`, user, {
       headers: this.getHeaders()
     });
   }
 
-  // Create minimal profile
-  createMinimalProfile(profile: MinimalProfileDto): Observable<string> {
-    return this.http.post<string>(`${this.baseUrl}/create-minimal`, profile, {
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders()
     });
   }
 
-  // Delete user (Admin only)
-  deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`, {
+  getUserProfile(): Observable<UserProfileDto> {
+    return this.http.get<UserProfileDto>(`${this.apiUrl}/profile`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  updateUserProfile(profile: any): Observable<UserProfileDto> {
+    return this.http.put<UserProfileDto>(`${this.apiUrl}/profile`, profile, {
       headers: this.getHeaders()
     });
   }

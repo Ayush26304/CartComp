@@ -119,6 +119,8 @@
       
       .order-actions {
         margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
         
         .download-btn {
           background: #28a745;
@@ -132,6 +134,21 @@
           
           &:hover {
             background: #218838;
+          }
+        }
+        
+        .cancel-btn {
+          background: #dc3545;
+          color: white;
+          border: none;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: 500;
+          transition: all 0.2s;
+          
+          &:hover {
+            background: #c82333;
           }
         }
       }
@@ -161,6 +178,47 @@
           width: 2px;
           background: #e9ecef;
           z-index: 1;
+        }
+        
+        .progress-line {
+          position: absolute;
+          left: 20px;
+          top: 0;
+          width: 2px;
+          background: linear-gradient(to bottom, #28a745, #20c997);
+          z-index: 2;
+          transition: height 0.5s ease-in-out;
+        }
+        
+        .progress-percentage {
+          text-align: center;
+          margin-bottom: 1rem;
+          
+          .percentage-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+          
+          .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            
+            .progress-fill {
+              height: 100%;
+              background: linear-gradient(90deg, #28a745, #20c997);
+              border-radius: 4px;
+              transition: width 0.5s ease-in-out;
+            }
+          }
         }
         
         .timeline-item {

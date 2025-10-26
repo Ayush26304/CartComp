@@ -74,22 +74,33 @@ export class AdminComponent implements OnInit {
     this.activeSection = section;
     
     switch (section) {
+      case 'overview':
+        this.loadOverviewStats();
+        break;
       case 'users':
-        this.loadUsers();
+        if (this.users.length === 0) {
+          this.loadUsers();
+        }
         break;
       case 'categories':
-        this.loadCategories();
+        if (this.categories.length === 0) {
+          this.loadCategories();
+        }
         break;
       case 'products':
-        this.loadProducts();
+        if (this.products.length === 0) {
+          this.loadProducts();
+        }
         break;
       case 'orders':
-        this.loadOrders();
+        if (this.orders.length === 0) {
+          this.loadOrders();
+        }
         break;
     }
   }
 
-  private loadOverviewStats(): void {
+  loadOverviewStats(): void {
     // Load basic stats for overview
     this.userService.getAllUsers().subscribe({
       next: (users: any) => {
@@ -133,11 +144,11 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  private loadUsers(): void {
+  loadUsers(): void {
     this.loading.users = true;
     this.userService.getAllUsers().subscribe({
       next: (users: any) => {
-        this.users = users;
+        this.users = users || [];
         this.loading.users = false;
       },
       error: (error: any) => {
@@ -148,11 +159,11 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  private loadCategories(): void {
+  loadCategories(): void {
     this.loading.categories = true;
     this.adminService.getAllCategories().subscribe({
       next: (categories: any) => {
-        this.categories = categories;
+        this.categories = categories || [];
         this.loading.categories = false;
       },
       error: (error: any) => {
@@ -163,11 +174,11 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  private loadProducts(): void {
+  loadProducts(): void {
     this.loading.products = true;
     this.adminService.getAllProducts().subscribe({
       next: (products: any) => {
-        this.products = products;
+        this.products = products || [];
         this.loading.products = false;
       },
       error: (error: any) => {
@@ -178,20 +189,19 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  private loadOrders(): void {
+  loadOrders(): void {
     this.loading.orders = true;
     
     this.adminService.getAllOrders().subscribe({
       next: (orders: any) => {
-        this.orders = orders;
+        this.orders = orders || [];
         this.loading.orders = false;
-        this.stats.totalOrders = orders.length;
+        this.stats.totalOrders = this.orders.length;
       },
       error: (error: any) => {
         console.error('Error loading orders:', error);
         this.loading.orders = false;
         this.orders = [];
-        // If the endpoint doesn't exist, show a helpful message
         if (error.status === 404) {
           console.log('Order admin endpoint not found - backend needs admin order endpoints');
         }
@@ -248,40 +258,6 @@ export class AdminComponent implements OnInit {
   }
 
   // Category Management
-  deleteCategory(id: number): void {
-    if (confirm('Are you sure you want to delete this category?')) {
-      this.adminService.deleteCategory(id).subscribe({
-        next: () => {
-          this.categories = this.categories.filter(cat => cat.id !== id);
-          this.stats.totalCategories--;
-          alert('Category deleted successfully');
-        },
-        error: (error: any) => {
-          console.error('Error deleting category:', error);
-          alert('Failed to delete category');
-        }
-      });
-    }
-  }
-
-  // Product Management
-  deleteProduct(id: number): void {
-    if (confirm('Are you sure you want to delete this product?')) {
-      this.adminService.deleteProduct(id).subscribe({
-        next: () => {
-          this.products = this.products.filter(product => product.id !== id);
-          this.stats.totalProducts--;
-          alert('Product deleted successfully');
-        },
-        error: (error: any) => {
-          console.error('Error deleting product:', error);
-          alert('Failed to delete product');
-        }
-      });
-    }
-  }
-
-  // Modal Management
   openCategoryModal(isEdit = false, categoryData: any = null): void {
     this.modals.category = {
       visible: true,
@@ -310,6 +286,27 @@ export class AdminComponent implements OnInit {
     }
   }
 
+  editCategory(category: any): void {
+    this.openCategoryModal(true, category);
+  }
+
+  deleteCategory(id: number): void {
+    if (confirm('Are you sure you want to delete this category?')) {
+      this.adminService.deleteCategory(id).subscribe({
+        next: () => {
+          this.categories = this.categories.filter(cat => cat.id !== id);
+          this.stats.totalCategories--;
+          alert('Category deleted successfully');
+        },
+        error: (error: any) => {
+          console.error('Error deleting category:', error);
+          alert('Failed to delete category');
+        }
+      });
+    }
+  }
+
+  // Product Management
   openProductModal(isEdit = false, productData: any = null): void {
     this.modals.product = {
       visible: true,
@@ -338,12 +335,24 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  editCategory(category: any): void {
-    this.openCategoryModal(true, category);
-  }
-
   editProduct(product: any): void {
     this.openProductModal(true, product);
+  }
+
+  deleteProduct(id: number): void {
+    if (confirm('Are you sure you want to delete this product?')) {
+      this.adminService.deleteProduct(id).subscribe({
+        next: () => {
+          this.products = this.products.filter(product => product.id !== id);
+          this.stats.totalProducts--;
+          alert('Product deleted successfully');
+        },
+        error: (error: any) => {
+          console.error('Error deleting product:', error);
+          alert('Failed to delete product');
+        }
+      });
+    }
   }
 
   // Utility methods
@@ -365,7 +374,6 @@ export class AdminComponent implements OnInit {
     
     this.adminService.updateOrderStatus(orderId, newStatus).subscribe({
       next: () => {
-        // Update the order status in the local array
         const orderIndex = this.orders.findIndex(order => order.orderId === orderId);
         if (orderIndex !== -1) {
           this.orders[orderIndex].status = newStatus;
@@ -375,7 +383,6 @@ export class AdminComponent implements OnInit {
       error: (error: any) => {
         console.error('Error updating order status:', error);
         alert('Failed to update order status');
-        // Revert the select value
         event.target.value = this.orders.find(o => o.orderId === orderId)?.status || 'PENDING';
       }
     });
@@ -384,7 +391,6 @@ export class AdminComponent implements OnInit {
   viewOrderDetails(orderId: number): void {
     this.adminService.getOrderById(orderId).subscribe({
       next: (order: OrderResponseDto) => {
-        // Create a detailed view modal or navigate to order details
         const itemsText = order.items.map(item => 
           `${item.productName} x${item.quantity} @ ₹${item.price}`
         ).join('\n');
@@ -407,7 +413,6 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  // Delete order method
   deleteOrder(orderId: number): void {
     if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
       this.adminService.deleteOrder(orderId).subscribe({

@@ -1,0 +1,98 @@
+<div class="modal-backdrop" *ngIf="isVisible" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEdit ? 'Edit Product' : 'Add New Product' }}</h3>
+      <button class="close-btn" (click)="onClose()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <form (ngSubmit)="onSave()">
+        <div class="form-group">
+          <label for="productName">Product Name *</label>
+          <input 
+            type="text" 
+            id="productName"
+            [(ngModel)]="product.name" 
+            name="productName"
+            placeholder="Enter product name"
+            required 
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="productDescription">Description</label>
+          <textarea 
+            id="productDescription"
+            [(ngModel)]="product.description" 
+            name="productDescription"
+            placeholder="Enter product description"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="productPrice">Price *</label>
+            <input 
+              type="number" 
+              id="productPrice"
+              [(ngModel)]="product.price" 
+              name="productPrice"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="productStock">Stock</label>
+            <input 
+              type="number" 
+              id="productStock"
+              [(ngModel)]="product.stock" 
+              name="productStock"
+              placeholder="0"
+              min="0"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="productCategory">Category *</label>
+          <select 
+            id="productCategory"
+            [(ngModel)]="product.categoryId" 
+            name="productCategory"
+            required
+          >
+            <option value="">Select a category</option>
+            <option *ngFor="let category of categories" [value]="category.id">
+              {{category.name}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="productImage">Image URL</label>
+          <input 
+            type="url" 
+            id="productImage"
+            [(ngModel)]="product.imageUrl" 
+            name="productImage"
+            placeholder="https://example.com/image.jpg"
+          />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="onClose()" [disabled]="loading">
+            Cancel
+          </button>
+          <button type="submit" class="btn-save" [disabled]="loading || !product.name.trim() || !product.categoryId || product.price <= 0">
+            {{ loading ? 'Saving...' : (isEdit ? 'Update' : 'Create') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

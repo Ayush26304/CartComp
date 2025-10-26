@@ -45,10 +45,6 @@ export class AuthService {
   logout() {
     this.tokenSubject.next(null);
     this.roleSubject.next(null);
-    this.usernameSubject.next(null);
-    if (this.isBrowser()) {
-      localStorage.removeItem('jwt');
-    }
   }
 
   get token(): string | null {
@@ -77,29 +73,6 @@ export class AuthService {
   
   get isLoggedIn(): boolean {
     return !!this.tokenSubject.value;
-  }
-
-  // Method for route guards
-  isAuthenticated(): boolean {
-    return this.isLoggedIn;
-  }
-
-  // Redirect URL management for login redirects
-  private redirectUrl: string | null = null;
-
-  setRedirectUrl(url: string): void {
-    this.redirectUrl = url;
-  }
-
-  getRedirectUrl(): string | null {
-    const url = this.redirectUrl;
-    this.redirectUrl = null; // Clear after getting
-    return url;
-  }
-
-  // Check if user has admin role
-  isAdmin(): boolean {
-    return this.role === 'ADMIN' || this.role === 'admin';
   }
 
   // Helper method to get all JWT claims for debugging

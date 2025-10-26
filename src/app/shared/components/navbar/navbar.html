@@ -18,7 +18,7 @@
             class="search-input"
             (keyup.enter)="onSearch()"
           >
-          <button type="submit" class="search-btn" [disabled]="!searchQuery?.trim()">
+          <button type="submit" class="search-btn" [disabled]="!searchQuery.trim()">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -33,34 +33,22 @@
  
     <!-- Links -->
     <nav [class.active]="isMenuOpen">
-      <!-- Admin Navigation -->
-      <ng-container *ngIf="isLoggedIn && userRole === 'ROLE_ADMIN'">
-        <a routerLink="/admin-dashboard">Admin Dashboard</a>
-        <a routerLink="/home">User View</a>
-      </ng-container>
-      
-      <!-- User Navigation -->
-      <ng-container *ngIf="isLoggedIn && userRole !== 'ROLE_ADMIN'">
-        <a routerLink="/home">Home</a>
-        <a routerLink="/categories">Categories</a>
-        <a routerLink="/cart">🛒 Cart ({{cartItemCount}})</a>
-      </ng-container>
+      <a routerLink="/home">Home</a>
+      <a routerLink="product" >Products</a>
+      <a routerLink="/categories">Categories</a>
+      <a routerLink="/cart" >🛒 Cart ({{cartItemCount}})</a>
     
       <!-- If logged in -->
       <ng-container *ngIf="isLoggedIn; else guestLinks">
-        <a routerLink="/userprofile" class="profile" *ngIf="userRole !== 'ROLE_ADMIN'">
+        <a routerLink="/userprofile" class="profile">
           👤 {{ username }}
         </a>
-        <span class="profile" *ngIf="userRole === 'ROLE_ADMIN'">
-          👑 {{ username }} (Admin)
-        </span>
         <button class="logout-btn" (click)="logout()">Logout</button>
       </ng-container>
  
       <!-- If not logged in -->
       <ng-template #guestLinks>
-        <a routerLink="/login" *ngIf="!isLoggedIn">Login</a>
-        <a routerLink="/signup" *ngIf="!isLoggedIn">Sign Up</a>    
+        <a href="/" *ngIf="!isLoggedIn">Login</a>    
       </ng-template>
     </nav>
   </div>

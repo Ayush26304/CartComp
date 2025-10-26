@@ -45,6 +45,9 @@
         <button class="download-btn" (click)="downloadInvoice()">
           📄 Download Invoice
         </button>
+        <button class="cancel-btn" *ngIf="canCancelOrder()" (click)="cancelOrder()">
+          ❌ Cancel Order
+        </button>
       </div>
     </div>
 
@@ -52,23 +55,29 @@
     <div class="tracking-progress" *ngIf="trackingInfo">
       <h3>Order Progress</h3>
       <div class="progress-timeline">
-        <div *ngFor="let step of trackingInfo.trackingSteps" 
+        <div *ngFor="let step of trackingInfo.trackingSteps; let i = index" 
              class="timeline-item" 
              [class.completed]="step.completed"
-             [class.current]="step.status === trackingInfo.currentStatus">
+             [class.current]="step.current">
           
           <div class="timeline-marker">
-            <div class="marker-circle">
-              <span *ngIf="step.completed">✓</span>
-              <span *ngIf="!step.completed && step.status === trackingInfo.currentStatus">●</span>
+            <div class="marker-circle" [class.completed]="step.completed" [class.current]="step.current">
+              <span *ngIf="step.completed && !step.current">✓</span>
+              <span *ngIf="step.current">●</span>
+            </div>
+            <div class="timeline-line" *ngIf="i < trackingInfo.trackingSteps.length - 1" 
+                 [class.completed]="trackingInfo.trackingSteps[i + 1].completed">
             </div>
           </div>
           
           <div class="timeline-content">
-            <h4>{{step.status.replace('_', ' ')}}</h4>
+            <h4>{{step.label}}</h4>
             <p>{{step.description}}</p>
-            <span class="timeline-date" *ngIf="step.date">
+            <span class="timeline-date" *ngIf="step.date && step.completed">
               {{formatDate(step.date)}}
+            </span>
+            <span class="timeline-status" *ngIf="step.current">
+              In Progress
             </span>
           </div>
         </div>

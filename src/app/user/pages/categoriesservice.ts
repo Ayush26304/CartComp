@@ -112,7 +112,7 @@ export class CategoriesService {
     });
   }
 
-  // Search products - simple keyword search
+  // Search products
   searchProducts(keyword: string): Observable<ProductDto[]> {
     const searchUrl = `${this.baseUrl}/product/search?keyword=${encodeURIComponent(keyword)}`;
     

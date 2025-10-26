@@ -88,8 +88,13 @@
     <!-- Users Section -->
     <div *ngIf="activeSection === 'users'" class="users-section">
       <div class="section-header">
-        <h2>User Management</h2>
-        <button class="btn-primary" (click)="openUserModal()">Add New User</button>
+        <h2>User Management ({{users.length}} users)</h2>
+        <div class="section-actions">
+          <button class="btn-secondary" (click)="loadUsers()" [disabled]="loading.users">
+            {{ loading.users ? 'Loading...' : 'Refresh' }}
+          </button>
+          <button class="btn-primary" (click)="openUserModal()">Add New User</button>
+        </div>
       </div>
       
       <div *ngIf="loading.users" class="loading">Loading users...</div>
@@ -132,8 +137,13 @@
     <!-- Categories Section -->
     <div *ngIf="activeSection === 'categories'" class="categories-section">
       <div class="section-header">
-        <h2>Category Management</h2>
-        <button class="btn-primary" (click)="openCategoryModal()">Add New Category</button>
+        <h2>Category Management ({{categories.length}} categories)</h2>
+        <div class="section-actions">
+          <button class="btn-secondary" (click)="loadCategories()" [disabled]="loading.categories">
+            {{ loading.categories ? 'Loading...' : 'Refresh' }}
+          </button>
+          <button class="btn-primary" (click)="openCategoryModal()">Add New Category</button>
+        </div>
       </div>
       
       <div *ngIf="loading.categories" class="loading">Loading categories...</div>
@@ -170,8 +180,13 @@
     <!-- Products Section -->
     <div *ngIf="activeSection === 'products'" class="products-section">
       <div class="section-header">
-        <h2>Product Management</h2>
-        <button class="btn-primary" (click)="openProductModal()">Add New Product</button>
+        <h2>Product Management ({{products.length}} products)</h2>
+        <div class="section-actions">
+          <button class="btn-secondary" (click)="loadProducts()" [disabled]="loading.products">
+            {{ loading.products ? 'Loading...' : 'Refresh' }}
+          </button>
+          <button class="btn-primary" (click)="openProductModal()">Add New Product</button>
+        </div>
       </div>
       
       <div *ngIf="loading.products" class="loading">Loading products...</div>
@@ -208,7 +223,12 @@
     <!-- Orders Section -->
     <div *ngIf="activeSection === 'orders'" class="orders-section">
       <div class="section-header">
-        <h2>Order Management</h2>
+        <h2>Order Management ({{orders.length}} orders)</h2>
+        <div class="section-actions">
+          <button class="btn-secondary" (click)="loadOrders()" [disabled]="loading.orders">
+            {{ loading.orders ? 'Loading...' : 'Refresh' }}
+          </button>
+        </div>
       </div>
       
       <div *ngIf="loading.orders" class="loading">Loading orders...</div>

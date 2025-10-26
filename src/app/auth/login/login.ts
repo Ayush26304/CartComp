@@ -43,13 +43,8 @@ export class LoginComponent implements OnInit {
 
 this.authService.login(username, password).subscribe({
   next: () => {
-    // Navigate based on role
     const role = this.authService.role;
-    if (role === 'ROLE_ADMIN' || role === 'ADMIN') {
-      this.router.navigate(['/admin-dashboard']);
-    } else {
-      this.router.navigate(['/home']);
-    }
+    this.router.navigate([role === 'ROLE_ADMIN' ? '/admin' : '/home']);
   },
   error: () => {
     this.error = 'Login failed. Please try again.';

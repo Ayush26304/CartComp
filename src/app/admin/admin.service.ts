@@ -1,237 +1,149 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
-export interface UserProfileDto {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  dateOfBirth?: string;
-  profilePictureUrl?: string;
-  createdAt: string;
-  updatedAt?: string;
-}
-
-export interface UpdateProfileDto {
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  dateOfBirth?: string;
-}
-
-export interface MinimalProfileDto {
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-}
-
-export interface OrderSummaryDto {
-  id: number;
-  userId: number;
-  totalAmount: number;
-  status: string;
-  orderDate: string;
-  customerName: string;
-  itemCount: number;
-}
-
+// DTOs matching backend structure
 export interface OrderResponseDto {
   orderId: number;
+  userId: number;
   invoiceNumber: string;
+  orderDate: string;
   totalAmount: number;
   status: string;
-  orderDate: string;
   items: OrderItemDto[];
-  shipping: ShippingInfoDto;
+  shipping: ShippingInfo;
 }
 
 export interface OrderItemDto {
   productId: number;
   productName: string;
-  price: number;
   quantity: number;
+  price: number;
 }
 
-export interface ShippingInfoDto {
+export interface ShippingInfo {
   fullName: string;
+  phone: string;
   address: string;
   city: string;
   state: string;
-  zipCode: string;
-  country: string;
-  phone: string;
+  pincode: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
-  private baseUrl = 'http://localhost:8056/api';
-  
-  constructor(private http: HttpClient, private auth: AuthService) {}
+  private apiUrl = 'http://localhost:8056/api';
 
-  private getHeaders() {
-    return { Authorization: `Bearer ${this.auth.token}` };
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.token;
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
   }
 
-  // User Management
-  getAllUsers(): Observable<UserProfileDto[]> {
-    return this.http.get<UserProfileDto[]>(`${this.baseUrl}/user/all`, {
+  // Order Management - matching backend OrderController endpoints
+  getAllOrders(): Observable<OrderResponseDto[]> {
+    return this.http.get<OrderResponseDto[]>(`${this.apiUrl}/order/all`, {
       headers: this.getHeaders()
     });
   }
 
-  getUserById(id: number): Observable<UserProfileDto> {
-    return this.http.get<UserProfileDto>(`${this.baseUrl}/user/${id}`, {
+  getOrderById(orderId: number): Observable<OrderResponseDto> {
+    return this.http.get<OrderResponseDto>(`${this.apiUrl}/order/user/${orderId}`, {
       headers: this.getHeaders()
     });
   }
 
-  deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/user/${id}`, {
+  updateOrderStatus(orderId: number, status: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/order/updatestatus/${orderId}?status=${status}`, {}, {
       headers: this.getHeaders()
     });
   }
 
-  createMinimalProfile(profile: MinimalProfileDto): Observable<string> {
-    return this.http.post<string>(`${this.baseUrl}/user/create-minimal`, profile, {
+  deleteOrder(orderId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/order/delete/${orderId}`, {
       headers: this.getHeaders()
     });
   }
 
-  // Category Management (already exists in CategoriesService but adding here for admin context)
+  downloadOrderInvoice(orderId: number): void {
+    const url = `${this.apiUrl}/order/invoice/${orderId}`;
+    const headers = this.getHeaders();
+    
+    this.http.get(url, {
+      headers: headers,
+      responseType: 'blob'
+    }).subscribe({
+      next: (blob) => {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `invoice-${orderId}.txt`;
+        link.click();
+        window.URL.revokeObjectURL(downloadUrl);
+      },
+      error: (error) => {
+        console.error('Error downloading invoice:', error);
+        alert('Failed to download invoice');
+      }
+    });
+  }
+
+  // Category Management
   getAllCategories(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/catalog/category`, {
+    return this.http.get<any[]>(`${this.apiUrl}/catalog/category`, {
       headers: this.getHeaders()
     });
   }
 
-  addCategory(category: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/catalog/category`, category, {
+  createCategory(category: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/catalog/category`, category, {
       headers: this.getHeaders()
     });
   }
 
   updateCategory(id: number, category: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/catalog/category/${id}`, category, {
+    return this.http.put<any>(`${this.apiUrl}/catalog/category/${id}`, category, {
       headers: this.getHeaders()
     });
   }
 
-  deleteCategory(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/catalog/category/${id}`, {
+  deleteCategory(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/catalog/category/${id}`, {
       headers: this.getHeaders()
     });
   }
 
   // Product Management
   getAllProducts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/catalog/product`, {
+    return this.http.get<any[]>(`${this.apiUrl}/catalog/product`, {
       headers: this.getHeaders()
     });
   }
 
-  addProduct(product: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/catalog/product`, product, {
+  createProduct(product: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/catalog/product`, product, {
       headers: this.getHeaders()
     });
   }
 
   updateProduct(id: number, product: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/catalog/product/${id}`, product, {
+    return this.http.put<any>(`${this.apiUrl}/catalog/product/${id}`, product, {
       headers: this.getHeaders()
     });
   }
 
-  deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/catalog/product/${id}`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  // Order Management - Matching your OrderController endpoints exactly
-  getAllOrders(): Observable<OrderResponseDto[]> {
-    return this.http.get<OrderResponseDto[]>(`${this.baseUrl}/order/all`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  getOrderById(id: number): Observable<OrderResponseDto> {
-    return this.http.get<OrderResponseDto>(`${this.baseUrl}/order/user/${id}`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  updateOrderStatus(id: number, status: string): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/order/updatestatus/${id}?status=${status}`, {}, {
-      headers: this.getHeaders()
-    });
-  }
-
-  deleteOrder(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/order/delete/${id}`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  trackOrderByInvoice(invoiceNumber: string): Observable<OrderResponseDto> {
-    return this.http.get<OrderResponseDto>(`${this.baseUrl}/order/track/${invoiceNumber}`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  // Additional order management methods matching your controller
-  getUserOrderHistory(): Observable<OrderResponseDto[]> {
-    return this.http.get<OrderResponseDto[]>(`${this.baseUrl}/order/history`, {
-      headers: this.getHeaders()
-    });
-  }
-
-  downloadOrderInvoice(orderId: number): void {
-    const url = `${this.baseUrl}/order/invoice/${orderId}`;
-    const headers = this.getHeaders();
-    
-    // Create a link to download with authorization
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': headers.Authorization,
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.blob())
-    .then(blob => {
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `invoice_${orderId}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-    })
-    .catch(error => {
-      console.error('Error downloading invoice:', error);
-      alert('Failed to download invoice');
-    });
-  }
-
-  // Statistics for admin dashboard
-  getDashboardStats(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/stats`, {
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/catalog/product/${id}`, {
       headers: this.getHeaders()
     });
   }
