@@ -120,6 +120,26 @@ export class CategoriesService {
       headers: { Authorization: `Bearer ${this.auth.token}` }
     });
   }
+
+  // Get latest products from backend /latest endpoint
+  getLatestProducts(limit: number = 10): Observable<ProductDto[]> {
+    return this.http.get<ProductDto[]>(`${this.baseUrl}/product/latest`, {
+      headers: { Authorization: `Bearer ${this.auth.token}` }
+    });
+  }
+
+  // Add to cart through categories service (for consistency)
+  addToCart(productId: number, quantity: number = 1): Observable<any> {
+    const cartItem = {
+      productId: productId,
+      quantity: quantity
+    };
+    
+    return this.http.post(`http://localhost:8056/api/cart`, cartItem, {
+      headers: { Authorization: `Bearer ${this.auth.token}` },
+      responseType: 'text' as 'json'
+    });
+  }
 }
 
 

@@ -43,8 +43,15 @@ export class AuthService {
   }
 
   logout() {
+    // Clear all authentication data
     this.tokenSubject.next(null);
     this.roleSubject.next(null);
+    this.usernameSubject.next(null);
+    
+    // Remove JWT token from localStorage
+    if (this.isBrowser()) {
+      localStorage.removeItem('jwt');
+    }
   }
 
   get token(): string | null {

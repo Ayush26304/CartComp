@@ -1,5 +1,5 @@
 
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoriesService, ProductDto } from '../pages/categoriesservice';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { CartService } from '../cartservice';
 import { NavbarComponent } from '../../shared/components/navbar/navbar';
 import { FooterComponent } from '../../shared/components/footer/footer';
+import { WishlistService } from '../wishlist.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product',
@@ -15,7 +17,7 @@ import { FooterComponent } from '../../shared/components/footer/footer';
   styleUrl: './product.scss',
   standalone: true
 })
-export class ProductDescriptionComponent implements OnInit {
+export class ProductDescriptionComponent implements OnInit, OnDestroy {
   @Input() isChildComponent: boolean = false;
   product: ProductDto | null = null;
   quantity: number = 1;
@@ -24,6 +26,7 @@ export class ProductDescriptionComponent implements OnInit {
   selectedImageIndex = 0;
   isFavorite = false;
   showNavbar: boolean = true;
+  private wishlistSubscription: Subscription = new Subscription();
   
   // Mock additional product images for demonstration
   additionalImages: string[] = [];
@@ -32,7 +35,8 @@ export class ProductDescriptionComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private categoryService: CategoriesService,
-    private cartservice: CartService
+    private cartservice: CartService,
+    private wishlistService: WishlistService
   ) {}
  
   ngOnInit(): void {
@@ -45,6 +49,8 @@ export class ProductDescriptionComponent implements OnInit {
         next: (res) => {
           this.product = res;
           this.loading = false;
+          // Check if product is in wishlist
+          this.isFavorite = this.wishlistService.isInWishlist(res.id);
           // Generate additional mock images for carousel
           this.generateAdditionalImages();
         },
@@ -54,6 +60,17 @@ export class ProductDescriptionComponent implements OnInit {
         }
       });
     }
+
+    // Subscribe to wishlist changes
+    this.wishlistSubscription = this.wishlistService.wishlist$.subscribe(() => {
+      if (this.product) {
+        this.isFavorite = this.wishlistService.isInWishlist(this.product.id);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.wishlistSubscription.unsubscribe();
   }
 
   generateAdditionalImages(): void {
@@ -84,10 +101,23 @@ export class ProductDescriptionComponent implements OnInit {
   }
 
   toggleFavorite(): void {
+    if (!this.product) return;
+    
+    // Immediately update UI for smooth experience
     this.isFavorite = !this.isFavorite;
-    // TODO: Implement favorites service
-    const action = this.isFavorite ? 'added to' : 'removed from';
-    console.log(`Product ${action} favorites`);
+    
+    this.wishlistService.toggleWishlist(this.product.id).subscribe({
+      next: () => {
+        const action = this.isFavorite ? 'added to' : 'removed from';
+        alert(`${this.product!.name} ${action} wishlist successfully!`);
+      },
+      error: (error) => {
+        // Revert the UI change if the request failed
+        this.isFavorite = !this.isFavorite;
+        console.error('Error toggling wishlist:', error);
+        alert('Failed to update wishlist. Please try again.');
+      }
+    });
   }
 
   navigateToShop(): void {

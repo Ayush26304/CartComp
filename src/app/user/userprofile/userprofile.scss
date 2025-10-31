@@ -462,16 +462,74 @@
  
     /* FAVORITES SECTION */
     .favorites-section {
+      .wishlist-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        
+        .wishlist-count {
+          color: #565959;
+          font-size: 0.875rem;
+        }
+        
+        .refresh-btn {
+          background: #fff;
+          border: 1px solid #D5D9D9;
+          border-radius: 8px;
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          cursor: pointer;
+          color: #0F1111;
+          
+          &:hover:not(:disabled) {
+            background: #F7FAFA;
+            border-color: #007185;
+          }
+          
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+      }
+      
+      .loading-favorites {
+        text-align: center;
+        padding: 3rem;
+        color: #565959;
+        
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #FF9900;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 1rem;
+        }
+        
+        p {
+          font-size: 1rem;
+          margin: 0;
+        }
+      }
+      
       .favorites-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
+        gap: 1.5rem;
         
         .favorite-item-card {
           border: 1px solid #D5D9D9;
           border-radius: 8px;
           padding: 1rem;
           background: #fff;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #007185;
+          }
           
           .favorite-image-container {
             position: relative;
@@ -482,22 +540,30 @@
               height: 200px;
               object-fit: contain;
               border-radius: 4px;
+              background: #f8f9fa;
             }
             
             .remove-favorite-btn {
               position: absolute;
               top: 0.5rem;
               right: 0.5rem;
-              background: rgba(255, 255, 255, 0.9);
-              border: none;
+              background: rgba(255, 255, 255, 0.95);
+              border: 1px solid #e63946;
               border-radius: 50%;
-              width: 2rem;
-              height: 2rem;
+              width: 2.5rem;
+              height: 2.5rem;
               font-size: 1.25rem;
               cursor: pointer;
+              color: #e63946;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.3s ease;
               
               &:hover {
-                background: #fff;
+                background: #e63946;
+                color: white;
+                transform: scale(1.1);
               }
             }
           }
@@ -505,11 +571,15 @@
           .favorite-details {
             .favorite-title {
               font-size: 1rem;
-              font-weight: 400;
+              font-weight: 500;
               color: #007185;
               margin: 0 0 0.5rem 0;
               line-height: 1.3;
               cursor: pointer;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
               
               &:hover {
                 color: #C7511F;
@@ -517,11 +587,37 @@
               }
             }
             
+            .favorite-description {
+              font-size: 0.875rem;
+              color: #565959;
+              margin: 0 0 0.5rem 0;
+              line-height: 1.3;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+            
             .favorite-price {
               font-size: 1.125rem;
               font-weight: 700;
               color: #B12704;
+              margin: 0 0 0.5rem 0;
+            }
+            
+            .favorite-stock,
+            .stock-available,
+            .stock-unavailable {
+              font-size: 0.875rem;
               margin: 0 0 1rem 0;
+              
+              &.stock-available {
+                color: #007600;
+              }
+              
+              &.stock-unavailable {
+                color: #B12704;
+              }
             }
             
             .favorite-actions {
@@ -538,13 +634,20 @@
                 font-weight: 700;
                 color: #0F1111;
                 cursor: pointer;
+                transition: background 0.3s ease;
                 
-                &:hover {
+                &:hover:not(:disabled) {
                   background: #FA8900;
+                }
+                
+                &:disabled {
+                  background: #cccccc;
+                  cursor: not-allowed;
+                  opacity: 0.6;
                 }
               }
               
-              .move-to-list-btn {
+              .view-product-btn {
                 background: #fff;
                 border: 1px solid #D5D9D9;
                 border-radius: 8px;
@@ -552,6 +655,7 @@
                 font-size: 0.875rem;
                 cursor: pointer;
                 color: #0F1111;
+                transition: all 0.3s ease;
                 
                 &:hover {
                   background: #F7FAFA;

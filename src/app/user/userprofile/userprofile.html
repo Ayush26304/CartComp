@@ -7,8 +7,8 @@
       <div class="user-info-header">
         <img [src]="user.image" alt="User Avatar" class="avatar" />
         <div class="user-details">
-          <h3>{{ user.name }}</h3>
-          <p class="user-email">{{ user.email }}</p>
+          <h3>{{ user.name || 'User' }}</h3>
+          <p class="user-email">{{ user.email || 'No email provided' }}</p>
           <span class="user-badge">Prime Member</span>
         </div>
       </div>
@@ -218,22 +218,47 @@
       <div class="section-header-main">
         <h2>Your Wish List</h2>
         <div class="wishlist-actions">
-          <button class="manage-list-btn">Manage list</button>
+          <span class="wishlist-count">{{ favorites.length }} items</span>
+          <button class="refresh-btn" (click)="loadFavorites()" [disabled]="loadingFavorites">
+            <span *ngIf="!loadingFavorites">🔄 Refresh</span>
+            <span *ngIf="loadingFavorites">Loading...</span>
+          </button>
         </div>
       </div>
       
-      <div *ngIf="favorites.length; else noFavs" class="favorites-grid">
-        <div class="favorite-item-card" *ngFor="let f of favorites">
+      <!-- Loading State -->
+      <div *ngIf="loadingFavorites" class="loading-favorites">
+        <div class="spinner"></div>
+        <p>Loading your wishlist...</p>
+      </div>
+      
+      <div *ngIf="!loadingFavorites && favorites.length > 0; else noFavs" class="favorites-grid">
+        <div class="favorite-item-card" *ngFor="let product of favorites">
           <div class="favorite-image-container">
-            <img [src]="f.image" alt="{{ f.title }}" />
-            <button class="remove-favorite-btn">×</button>
+            <img [src]="product.imageUrl || 'https://via.placeholder.com/200x200?text=No+Image'" [alt]="product.name" />
+            <button class="remove-favorite-btn" (click)="removeFromWishlist(product)" title="Remove from wishlist">×</button>
           </div>
           <div class="favorite-details">
-            <h4 class="favorite-title">{{ f.title }}</h4>
-            <p class="favorite-price">₹{{ f.price | number:'1.2-2' }}</p>
+            <h4 class="favorite-title">{{ product.name }}</h4>
+            <p class="favorite-description">{{ product.description }}</p>
+            <p class="favorite-price">₹{{ product.price | number:'1.2-2' }}</p>
+            <div class="favorite-stock" *ngIf="product.stock > 0; else outOfStock">
+              <span class="stock-available">✅ In Stock ({{ product.stock }} available)</span>
+            </div>
+            <ng-template #outOfStock>
+              <span class="stock-unavailable">❌ Out of Stock</span>
+            </ng-template>
             <div class="favorite-actions">
-              <button class="add-to-cart-btn">Add to Cart</button>
-              <button class="move-to-list-btn">Move to another list</button>
+              <button 
+                class="add-to-cart-btn" 
+                (click)="addToCartFromWishlist(product)"
+                [disabled]="product.stock === 0"
+              >
+                Add to Cart
+              </button>
+              <button class="view-product-btn" (click)="router.navigate(['/product', product.id])">
+                View Details
+              </button>
             </div>
           </div>
         </div>
@@ -243,8 +268,8 @@
         <div class="empty-state">
           <div class="empty-icon">❤️</div>
           <h3>Your Wish List is empty</h3>
-          <p>Save items you're interested in to your wish list</p>
-          <button class="continue-shopping-btn">Continue Shopping</button>
+          <p>Save items you're interested in to your wish list by clicking the ♥ icon on any product</p>
+          <button class="continue-shopping-btn" (click)="router.navigate(['/categories'])">Continue Shopping</button>
         </div>
       </ng-template>
     </div>

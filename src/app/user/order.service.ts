@@ -86,10 +86,14 @@ export class OrderService {
 
   // Download invoice for an order
   downloadInvoice(orderId: number): Observable<Blob> {
+    // Add user information to the request if available
+    const headers = this.getHeaders();
+    const username = this.authService.username || 'User';
+    
     return this.http.get(
-      `${this.apiUrl}/invoice/${orderId}`, 
+      `${this.apiUrl}/invoice/${orderId}?userName=${encodeURIComponent(username)}`, 
       { 
-        headers: this.getHeaders(),
+        headers: headers,
         responseType: 'blob'
       }
     );

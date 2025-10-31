@@ -10,53 +10,121 @@
  
   
   <section class="categories">
-    <!-- <h3>Shop by Category</h3>
-    <div class="grid">
-      <div class="card">Men</d76iv>
-      <div class="card">Women</div>
-      <div class="card">Electronics</div>
-      <div class="card">Home</div>
-    </div> -->
-    <app-categories [isChildComponent]="true"></app-categories>
+    <h3>Shop by Category</h3>
+    <div class="categories-nav">
+      <p>Browse our wide range of product categories</p>
+      <button class="btn category-btn" (click)="navigateToCategories()">
+        View All Categories
+      </button>
+    </div>
     <router-outlet></router-outlet>
   </section>
  
   
-  <section class="products">
-    <h3>Trending Products</h3>
-    <div class="grid">
-      <div class="product-card">
-        <img src="https://via.placeholder.com/150" alt="Product">
-        <p>Product Name</p>
-        <p class="price">₹29.99</p>
-        <button class="btn">Add to Cart</button>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/150" alt="Product">
-        <p>Another Product</p>
-        <p class="price">₹49.99</p>
-        <button class="btn">Add to Cart</button>
-      </div>
+  <section class="latest-products">
+    <div class="section-header">
+      <h2>🚀 Latest Launch</h2>
+      <span class="product-count">Top {{ latestProducts.length }} newest products</span>
+    </div>
     
+    <!-- Loading State -->
+    <div *ngIf="loadingProducts" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading latest products...</p>
+    </div>
+    
+    <!-- Products Grid -->
+    <div *ngIf="!loadingProducts && latestProducts.length > 0" class="products-grid">
+      <div 
+        *ngFor="let product of latestProducts; let i = index" 
+        class="product-card"
+        (click)="navigateToProduct(product.id)"
+      >
+        <div class="image-wrapper">
+          <img 
+            [src]="product.imageUrl || 'https://via.placeholder.com/300x300?text=No+Image'" 
+            [alt]="product.name"
+          />
+          <span class="new-badge">NEW</span>
+        </div>
+        <div class="product-info">
+          <h4 class="title">{{ product.name }}</h4>
+          <p class="price">₹{{ product.price | number:'1.2-2' }}</p>
+          <button 
+            class="btn" 
+            (click)="addToCart(product); $event.stopPropagation()"
+          >
+            Add to Cart
+          </button>
+          <span 
+            class="heart"
+            [class.active]="product.isFavorite"
+            (click)="toggleFavorite(product); $event.stopPropagation()"
+          >
+            ♥
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="!loadingProducts && latestProducts.length === 0" class="empty-state">
+      <h3>No new products available</h3>
+      <p>New products will appear here when they are added.</p>
+      <button class="btn" (click)="navigateToCategories()">Browse All Products</button>
     </div>
   </section>
  
-  <section class="products">
-    <h3>Your Favourite Products ❤️</h3>
-    <div class="grid">
-      <div class="product-card">
-        <img src="https://via.placeholder.com/150" alt="Product">
-        <p>Product Name</p>
-        <p class="price">₹29.99</p>
-        <button class="btn">Add to Cart</button>
-      </div>
-      <div class="product-card">
-        <img src="https://via.placeholder.com/150" alt="Product">
-        <p>Another Product</p>
-        <p class="price">₹49.99</p>
-        <button class="btn">Add to Cart</button>
-      </div>
+  <section class="favorite-products">
+    <div class="section-header">
+      <h2>❤️ Your Favourite Products</h2>
+      <span class="product-count">{{ favoriteProducts.length }} products in your wishlist</span>
+    </div>
     
+    <!-- Loading State -->
+    <div *ngIf="loadingFavorites" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading favorite products...</p>
+    </div>
+    
+    <!-- Favorite Products Grid -->
+    <div *ngIf="!loadingFavorites && favoriteProducts.length > 0" class="products-grid">
+      <div 
+        *ngFor="let product of favoriteProducts; let i = index" 
+        class="product-card"
+        (click)="navigateToProduct(product.id)"
+      >
+        <div class="image-wrapper">
+          <img 
+            [src]="product.imageUrl || 'https://via.placeholder.com/300x300?text=No+Image'" 
+            [alt]="product.name"
+          />
+          <span class="favorite-badge">FAVORITE</span>
+        </div>
+        <div class="product-info">
+          <h4 class="title">{{ product.name }}</h4>
+          <p class="price">₹{{ product.price | number:'1.2-2' }}</p>
+          <button 
+            class="btn" 
+            (click)="addToCart(product); $event.stopPropagation()"
+          >
+            Add to Cart
+          </button>
+          <span 
+            class="heart active"
+            (click)="toggleFavorite(product); $event.stopPropagation()"
+          >
+            ♥
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="!loadingFavorites && favoriteProducts.length === 0" class="empty-state">
+      <h3>No favorite products yet</h3>
+      <p>Start adding products to your wishlist by clicking the ♥ icon on any product.</p>
+      <button class="btn" (click)="navigateToCategories()">Browse Products</button>
     </div>
   </section>
  

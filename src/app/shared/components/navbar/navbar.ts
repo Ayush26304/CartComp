@@ -22,7 +22,11 @@ export class NavbarComponent {
   cartItemCount: number = 0;
   searchQuery: string = '';
 
-  constructor(private authService: AuthService, private cartService: CartService, private router: Router) {
+  constructor(
+    private authService: AuthService, 
+    private cartService: CartService, 
+    private router: Router
+  ) {
     this.authService.token$.subscribe(token => {
       this.isLoggedIn = !!token;
     });

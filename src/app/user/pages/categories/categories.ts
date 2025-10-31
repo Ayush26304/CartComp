@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { CategoriesService, CategoryDto, ProductDto } from '../categoriesservice';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,8 @@ import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 import { FooterComponent } from '../../../shared/components/footer/footer';
 import { NavigationService } from '../../../shared/services/navigation.service';
 import { CartService } from '../../cartservice';
+import { WishlistService } from '../../wishlist.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-categories',
@@ -15,20 +17,22 @@ import { CartService } from '../../cartservice';
   imports: [FormsModule, CommonModule, NavbarComponent, FooterComponent],
   standalone: true
 })
-export class CategoriesComponent implements OnInit {
+export class CategoriesComponent implements OnInit, OnDestroy {
   @Input() isChildComponent: boolean = false;
   categories: CategoryDto[] = [];
   products: (ProductDto & { isFavorite: boolean })[] = [];
   selectedCategory: CategoryDto | null = null;
   loading = false;
   showNavbar: boolean = true;
+  private wishlistSubscription: Subscription = new Subscription();
   
   constructor(
     private categoriesService: CategoriesService, 
     private router: Router,
     private route: ActivatedRoute,
     private navigationService: NavigationService,
-    private cartService: CartService
+    private cartService: CartService,
+    private wishlistService: WishlistService
   ) {}
  
   ngOnInit(): void {
@@ -36,6 +40,15 @@ export class CategoriesComponent implements OnInit {
     this.showNavbar = !this.isChildComponent;
     console.log('Categories component - isChildComponent:', this.isChildComponent, 'showNavbar:', this.showNavbar);
     this.loadCategories();
+    
+    // Subscribe to wishlist changes
+    this.wishlistSubscription = this.wishlistService.wishlist$.subscribe(() => {
+      this.updateProductWishlistStatus();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.wishlistSubscription.unsubscribe();
   }
  
   loadCategories(): void {
@@ -64,7 +77,7 @@ export class CategoriesComponent implements OnInit {
         console.log('Products loaded:', data);
         this.products = data.map(product => ({
           ...product,
-          isFavorite: false
+          isFavorite: this.wishlistService.isInWishlist(product.id)
         }));
         this.loading = false;
       },
@@ -100,9 +113,25 @@ export class CategoriesComponent implements OnInit {
   }
 
   toggleFavorite(product: ProductDto & { isFavorite: boolean }): void {
-    product.isFavorite = !product.isFavorite;
-    // TODO: Implement favorites service
-    const action = product.isFavorite ? 'added to' : 'removed from';
-    console.log(`${product.name} ${action} favorites`);
+    this.wishlistService.toggleWishlist(product.id).subscribe({
+      next: () => {
+        const isInWishlist = this.wishlistService.isInWishlist(product.id);
+        product.isFavorite = isInWishlist;
+        
+        const action = isInWishlist ? 'added to' : 'removed from';
+        alert(`${product.name} ${action} wishlist successfully!`);
+      },
+      error: (error) => {
+        console.error('Error toggling wishlist:', error);
+        alert('Failed to update wishlist. Please try again.');
+      }
+    });
+  }
+
+  updateProductWishlistStatus(): void {
+    // Update wishlist status for all products
+    this.products.forEach(product => {
+      product.isFavorite = this.wishlistService.isInWishlist(product.id);
+    });
   }
 }
